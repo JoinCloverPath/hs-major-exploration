@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloverPath Student Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CloverPath HS Dashboard
+   All styles scoped under #cp-hs-dash so nothing leaks into a
+   host Webflow page when embedded via iframe.
+   ============================================================ */
+
+#cp-hs-dash {
+  --cp-green: #008208;
+  --cp-lime: #7BBC00;
+  --cp-cream: #F7F5F0;
+  --cp-forest: #0F3D1E;
+  --cp-ink: #16211A;
+  --cp-border: #e4e0d6;
+  --cp-card: #ffffff;
+  --cp-muted: #5c6b60;
+  --cp-soft-green: #e9f4e6;
+  --cp-soft-lime: #f2f8e2;
+  --cp-radius: 14px;
+  --cp-radius-sm: 10px;
+  --cp-shadow: 0 1px 2px rgba(22, 33, 26, 0.05), 0 4px 14px rgba(22, 33, 26, 0.06);
+  --cp-shadow-lift: 0 2px 6px rgba(22, 33, 26, 0.08), 0 10px 28px rgba(22, 33, 26, 0.10);
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--cp-ink);
+  background: var(--cp-cream);
+  line-height: 1.55;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#cp-hs-dash *, #cp-hs-dash *::before, #cp-hs-dash *::after { box-sizing: border-box; }
+#cp-hs-dash h1, #cp-hs-dash h2, #cp-hs-dash h3, #cp-hs-dash h4, #cp-hs-dash p { margin: 0; }
+#cp-hs-dash button { font-family: inherit; cursor: pointer; }
+#cp-hs-dash textarea { font-family: inherit; }
+#cp-hs-dash svg { display: block; }
+
+#cp-hs-dash .cp-serif { font-family: "DM Serif Display", Georgia, serif; font-weight: 400; }
+
+#cp-hs-dash .cp-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+/* ---------- Header ---------- */
+#cp-hs-dash .cp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+#cp-hs-dash .cp-wordmark {
+  display: flex; align-items: center; gap: 10px;
+}
+#cp-hs-dash .cp-wordmark-name {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 24px;
+  color: var(--cp-forest);
+  letter-spacing: 0.2px;
+}
+#cp-hs-dash .cp-wordmark-tag {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cp-green);
+  background: var(--cp-soft-green);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+#cp-hs-dash .cp-header-right { display: flex; align-items: center; gap: 10px; }
+#cp-hs-dash .cp-reset-btn {
+  background: transparent;
+  border: 1px solid var(--cp-border);
+  border-radius: 999px;
+  color: var(--cp-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+#cp-hs-dash .cp-reset-btn:hover { border-color: var(--cp-muted); color: var(--cp-ink); }
+
+/* ---------- Nav tabs ---------- */
+#cp-hs-dash .cp-nav {
+  display: flex;
+  gap: 6px;
+  background: #efece4;
+  border: 1px solid var(--cp-border);
+  border-radius: 999px;
+  padding: 5px;
+  margin-bottom: 26px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#cp-hs-dash .cp-nav::-webkit-scrollbar { display: none; }
+#cp-hs-dash .cp-nav-btn {
+  flex: 1;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  color: var(--cp-muted);
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 999px;
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+#cp-hs-dash .cp-nav-btn:hover { color: var(--cp-forest); }
+#cp-hs-dash .cp-nav-btn.cp-active {
+  background: var(--cp-forest);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(15, 61, 30, 0.28);
+}
+#cp-hs-dash .cp-nav-btn:focus-visible,
+#cp-hs-dash button:focus-visible,
+#cp-hs-dash textarea:focus-visible,
+#cp-hs-dash [tabindex]:focus-visible {
+  outline: 3px solid var(--cp-lime);
+  outline-offset: 2px;
+}
+
+/* ---------- Cards and layout primitives ---------- */
+#cp-hs-dash .cp-card {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  box-shadow: var(--cp-shadow);
+  padding: 22px;
+}
+#cp-hs-dash .cp-grid { display: grid; gap: 16px; }
+#cp-hs-dash .cp-grid-2 { grid-template-columns: 1fr 1fr; }
+#cp-hs-dash .cp-grid-3 { grid-template-columns: repeat(3, 1fr); }
+#cp-hs-dash .cp-section-title {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 22px;
+  color: var(--cp-forest);
+  margin-bottom: 4px;
+}
+#cp-hs-dash .cp-section-sub { font-size: 14px; color: var(--cp-muted); margin-bottom: 14px; }
+#cp-hs-dash .cp-eyebrow {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cp-green); margin-bottom: 6px;
+}
+
+/* ---------- Home hero ---------- */
+#cp-hs-dash .cp-hero {
+  background: linear-gradient(135deg, var(--cp-forest) 0%, #14522a 70%, #1a6134 100%);
+  border-radius: 18px;
+  color: #f4f8f2;
+  padding: 30px 28px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+#cp-hs-dash .cp-hero::after {
+  content: "";
+  position: absolute;
+  right: -70px; top: -70px;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123, 188, 0, 0.32), rgba(123, 188, 0, 0) 70%);
+  pointer-events: none;
+}
+#cp-hs-dash .cp-hero h1 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+#cp-hs-dash .cp-hero p { color: #cfe3cd; font-size: 15.5px; max-width: 540px; }
+#cp-hs-dash .cp-hero-top { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+
+#cp-hs-dash .cp-level-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(247, 245, 240, 0.12);
+  border: 1px solid rgba(247, 245, 240, 0.25);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 600; font-size: 14px;
+  color: #fff;
+  backdrop-filter: blur(2px);
+}
+#cp-hs-dash .cp-level-chip svg { width: 16px; height: 16px; }
+
+#cp-hs-dash .cp-xp-wrap { margin-top: 20px; max-width: 560px; }
+#cp-hs-dash .cp-xp-labels {
+  display: flex; justify-content: space-between;
+  font-size: 13px; font-weight: 600; color: #d8e8d4; margin-bottom: 7px;
+}
+#cp-hs-dash .cp-xp-track {
+  height: 12px; border-radius: 999px;
+  background: rgba(247, 245, 240, 0.18);
+  overflow: hidden;
+}
+#cp-hs-dash .cp-xp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--cp-lime), #a8e63a);
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 12px rgba(123, 188, 0, 0.55);
+}
+#cp-hs-dash .cp-hero-cta {
+  margin-top: 22px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--cp-lime);
+  color: var(--cp-forest);
+  font-weight: 700; font-size: 15.5px;
+  border: none; border-radius: 999px;
+  padding: 13px 26px;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 4px 16px rgba(123, 188, 0, 0.35);
+}
+#cp-hs-dash .cp-hero-cta:hover { transform: translateY(-1px); background: #8ccf0f; box-shadow: 0 6px 20px rgba(123, 188, 0, 0.45); }
+#cp-hs-dash .cp-hero-cta svg { width: 17px; height: 17px; }
+
+/* ---------- Know Yourself rings ---------- */
+#cp-hs-dash .cp-rings-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+#cp-hs-dash .cp-ring-cell { text-align: center; padding: 6px 2px; }
+#cp-hs-dash .cp-ring-svg { margin: 0 auto 8px; }
+#cp-hs-dash .cp-ring-track { stroke: #edeae0; }
+#cp-hs-dash .cp-ring-fill {
+  stroke: var(--cp-green);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#cp-hs-dash .cp-ring-pct {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700; font-size: 15px; fill: var(--cp-forest);
+}
+#cp-hs-dash .cp-ring-name { font-size: 13px; font-weight: 600; color: var(--cp-ink); }
+#cp-hs-dash .cp-ring-hint { font-size: 11.5px; color: var(--cp-muted); margin-top: 1px; }
+
+/* ---------- Nudge ---------- */
+#cp-hs-dash .cp-nudge {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--cp-soft-lime);
+  border: 1px solid #d9e8b4;
+  border-radius: var(--cp-radius);
+  padding: 15px 18px;
+}
+#cp-hs-dash .cp-nudge-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 10px;
+  background: var(--cp-lime); color: var(--cp-forest);
+  display: flex; align-items: center; justify-content: center;
+}
+#cp-hs-dash .cp-nudge-icon svg { width: 20px; height: 20px; }
+#cp-hs-dash .cp-nudge-text { flex: 1; font-size: 14.5px; }
+#cp-hs-dash .cp-nudge-text strong { color: var(--cp-forest); }
+#cp-hs-dash .cp-nudge-btn {
+  flex: none;
+  background: var(--cp-forest); color: #fff;
+  border: none; border-radius: 999px;
+  font-weight: 600; font-size: 13.5px;
+  padding: 8px 16px;
+  transition: background 0.15s ease;
+}
+#cp-hs-dash .cp-nudge-btn:hover { background: #16522a; }
+
+/* ---------- Badges ---------- */
+#cp-hs-dash .cp-badge-strip { display: flex; gap: 12px; flex-wrap: wrap; }
+#cp-hs-dash .cp-badge {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  padding: 10px 14px;
+}
+#cp-hs-dash .cp-badge-medal {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cp-green), var(--cp-lime));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex: none;
+}
+#cp-hs-dash .cp-badge-medal svg { width: 20px; height: 20px; }
+#cp-hs-dash .cp-badge-name { font-weight: 700; font-size: 14px; color: var(--cp-forest); }
+#cp-hs-dash .cp-badge-desc { font-size: 12px; color: var(--cp-muted); }
+
+#cp-hs-dash .cp-trophy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+#cp-hs-dash .cp-trophy {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 20px 18px;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+#cp-hs-dash .cp-trophy.cp-earned:hover { transform: translateY(-2px); box-shadow: var(--cp-shadow-lift); }
+#cp-hs-dash .cp-trophy .cp-badge-medal { width: 56px; height: 56px; margin: 0 auto 12px; }
+#cp-hs-dash .cp-trophy .cp-badge-medal svg { width: 27px; height: 27px; }
+#cp-hs-dash .cp-trophy.cp-locked { opacity: 0.72; }
+#cp-hs-dash .cp-trophy.cp-locked .cp-badge-medal {
+  background: #dcd9cf; color: #97948b;
+}
+#cp-hs-dash .cp-trophy-name { font-family: "DM Serif Display", Georgia, serif; font-size: 18px; color: var(--cp-forest); margin-bottom: 3px; }
+#cp-hs-dash .cp-trophy.cp-locked .cp-trophy-name { color: #7c8078; }
+#cp-hs-dash .cp-trophy-cond { font-size: 12.5px; color: var(--cp-muted); }
+#cp-hs-dash .cp-trophy-earned-tag {
+  display: inline-block; margin-top: 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--cp-green); background: var(--cp-soft-green);
+  border-radius: 999px; padding: 3px 10px;
+}
+
+/* ---------- Explore ---------- */
+#cp-hs-dash .cp-subtabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+#cp-hs-dash .cp-subtab {
+  border: 1px solid var(--cp-border);
+  background: var(--cp-card);
+  color: var(--cp-muted);
+  border-radius: 999px;
+  font-weight: 600; font-size: 14px;
+  padding: 8px 18px;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-subtab.cp-active {
+  background: var(--cp-green); border-color: var(--cp-green); color: #fff;
+}
+#cp-hs-dash .cp-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+#cp-hs-dash .cp-chip {
+  border: 1px solid var(--cp-border);
+  background: transparent;
+  color: var(--cp-muted);
+  border-radius: 999px;
+  font-weight: 500; font-size: 12.5px;
+  padding: 5px 12px;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-chip.cp-active { background: var(--cp-forest); border-color: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-chip:hover:not(.cp-active) { border-color: var(--cp-green); color: var(--cp-green); }
+
+#cp-hs-dash .cp-item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+#cp-hs-dash .cp-item-card {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 18px;
+  text-align: left;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+#cp-hs-dash .cp-item-card:hover { transform: translateY(-2px); box-shadow: var(--cp-shadow-lift); border-color: #cfe0c2; }
+#cp-hs-dash .cp-item-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--cp-soft-green); color: var(--cp-green);
+  display: flex; align-items: center; justify-content: center;
+}
+#cp-hs-dash .cp-item-icon svg { width: 21px; height: 21px; }
+#cp-hs-dash .cp-item-name { font-weight: 700; font-size: 15.5px; color: var(--cp-forest); }
+#cp-hs-dash .cp-item-blurb { font-size: 13px; color: var(--cp-muted); }
+#cp-hs-dash .cp-item-meta { font-size: 12px; color: var(--cp-muted); }
+#cp-hs-dash .cp-state-tags { position: absolute; top: 12px; right: 12px; display: flex; gap: 5px; }
+#cp-hs-dash .cp-state-tag {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  border-radius: 999px; padding: 2.5px 8px;
+}
+#cp-hs-dash .cp-tag-viewed { background: #f0eee6; color: #8b8878; }
+#cp-hs-dash .cp-tag-saved { background: var(--cp-soft-green); color: var(--cp-green); }
+
+/* ---------- Detail modal ---------- */
+#cp-hs-dash .cp-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(22, 33, 26, 0.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  z-index: 9000;
+  animation: cpFadeIn 0.18s ease;
+}
+#cp-hs-dash .cp-modal {
+  background: var(--cp-cream);
+  border-radius: 18px;
+  max-width: 640px; width: 100%;
+  max-height: 86vh; overflow-y: auto;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(22, 33, 26, 0.3);
+  animation: cpSlideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes cpFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cpSlideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+#cp-hs-dash .cp-modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 8px; }
+#cp-hs-dash .cp-modal-title { font-family: "DM Serif Display", Georgia, serif; font-size: 26px; color: var(--cp-forest); line-height: 1.15; }
+#cp-hs-dash .cp-modal-close {
+  flex: none; border: 1px solid var(--cp-border); background: var(--cp-card);
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-muted);
+}
+#cp-hs-dash .cp-modal-close:hover { color: var(--cp-ink); border-color: var(--cp-muted); }
+#cp-hs-dash .cp-modal-close svg { width: 15px; height: 15px; }
+#cp-hs-dash .cp-modal-sub { color: var(--cp-muted); font-size: 14px; margin-bottom: 16px; }
+#cp-hs-dash .cp-detail-block { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 14px 16px; margin-bottom: 12px; }
+#cp-hs-dash .cp-detail-block h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cp-green); margin-bottom: 5px; }
+#cp-hs-dash .cp-detail-block p, #cp-hs-dash .cp-detail-block li { font-size: 14px; color: var(--cp-ink); }
+#cp-hs-dash .cp-detail-block ul { margin: 0; padding-left: 18px; }
+#cp-hs-dash .cp-illustrative-note { font-size: 11.5px; color: var(--cp-muted); font-style: italic; margin-top: 8px; }
+
+#cp-hs-dash .cp-action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+#cp-hs-dash .cp-action-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 999px;
+  font-weight: 700; font-size: 14px;
+  padding: 10px 20px;
+  border: none;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-action-btn svg { width: 16px; height: 16px; }
+#cp-hs-dash .cp-btn-save { background: var(--cp-green); color: #fff; }
+#cp-hs-dash .cp-btn-save:hover { background: #069b10; }
+#cp-hs-dash .cp-btn-save:disabled { background: var(--cp-soft-green); color: var(--cp-green); cursor: default; }
+#cp-hs-dash .cp-btn-reflect { background: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-btn-reflect:hover { background: #16522a; }
+#cp-hs-dash .cp-btn-compare { background: transparent; color: var(--cp-forest); border: 1.5px solid var(--cp-forest); }
+#cp-hs-dash .cp-btn-compare:hover { background: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-btn-compare.cp-in-tray { background: var(--cp-soft-lime); border-color: var(--cp-lime); color: var(--cp-forest); }
+
+#cp-hs-dash .cp-xp-hint { font-size: 11.5px; color: var(--cp-muted); margin-top: 8px; }
+
+/* ---------- Reflection form ---------- */
+#cp-hs-dash .cp-reflect-form { margin-top: 16px; background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 16px; }
+#cp-hs-dash .cp-reflect-form label { font-weight: 600; font-size: 14px; color: var(--cp-forest); display: block; margin-bottom: 8px; }
+#cp-hs-dash .cp-reflect-form textarea {
+  width: 100%; min-height: 90px; resize: vertical;
+  border: 1px solid var(--cp-border); border-radius: 8px;
+  padding: 10px 12px; font-size: 14px; color: var(--cp-ink);
+  background: var(--cp-cream);
+}
+#cp-hs-dash .cp-reflect-form textarea:focus { outline: 2px solid var(--cp-lime); border-color: var(--cp-lime); }
+#cp-hs-dash .cp-reflect-saved { background: var(--cp-soft-green); border: 1px solid #cbe4c4; border-radius: var(--cp-radius-sm); padding: 13px 15px; margin-top: 16px; font-size: 14px; }
+#cp-hs-dash .cp-reflect-saved strong { color: var(--cp-green); display: block; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+
+/* ---------- Compare ---------- */
+#cp-hs-dash .cp-compare-tray {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: var(--cp-forest); color: #fff;
+  border-radius: 999px;
+  padding: 11px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 10px 30px rgba(15, 61, 30, 0.4);
+  z-index: 8500;
+  font-size: 14px; font-weight: 600;
+  max-width: calc(100vw - 30px);
+}
+#cp-hs-dash .cp-compare-tray button {
+  background: rgba(255,255,255,0.14); border: none; color: #fff;
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px; font-weight: 600;
+}
+#cp-hs-dash .cp-compare-tray button:hover { background: rgba(255,255,255,0.24); }
+#cp-hs-dash .cp-compare-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+#cp-hs-dash .cp-compare-col { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 16px; }
+#cp-hs-dash .cp-compare-col h3 { font-family: "DM Serif Display", Georgia, serif; font-size: 19px; color: var(--cp-forest); margin-bottom: 8px; }
+#cp-hs-dash .cp-compare-field { margin-bottom: 10px; }
+#cp-hs-dash .cp-compare-field h5 { margin: 0 0 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--cp-green); }
+#cp-hs-dash .cp-compare-field p { font-size: 13px; }
+
+/* ---------- Results chart ---------- */
+#cp-hs-dash .cp-chart-wrap { overflow-x: auto; }
+#cp-hs-dash .cp-bar-label { font-size: 12.5px; font-weight: 600; fill: var(--cp-ink); font-family: "DM Sans", sans-serif; }
+#cp-hs-dash .cp-bar-value { font-size: 12px; font-weight: 700; fill: var(--cp-forest); font-family: "DM Sans", sans-serif; }
+#cp-hs-dash .cp-bar-track { fill: #edeae0; }
+#cp-hs-dash .cp-bar-fill { fill: var(--cp-green); }
+#cp-hs-dash .cp-bar-fill.cp-bar-top { fill: var(--cp-lime); }
+
+#cp-hs-dash .cp-locked-state { text-align: center; padding: 46px 24px; }
+#cp-hs-dash .cp-locked-state .cp-item-icon { margin: 0 auto 14px; width: 52px; height: 52px; }
+#cp-hs-dash .cp-locked-state .cp-item-icon svg { width: 26px; height: 26px; }
+
+/* ---------- My Path ---------- */
+#cp-hs-dash .cp-empty {
+  border: 1.5px dashed #d5d1c4;
+  border-radius: var(--cp-radius);
+  padding: 26px 20px;
+  text-align: center;
+  color: var(--cp-muted);
+  font-size: 14px;
+}
+#cp-hs-dash .cp-empty button {
+  margin-top: 10px;
+  background: var(--cp-green); color: #fff; border: none;
+  border-radius: 999px; padding: 8px 18px; font-weight: 600; font-size: 13.5px;
+}
+#cp-hs-dash .cp-empty button:hover { background: #069b10; }
+#cp-hs-dash .cp-reflection-card { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 15px 17px; }
+#cp-hs-dash .cp-reflection-card .cp-refl-item { font-weight: 700; color: var(--cp-forest); font-size: 14px; margin-bottom: 3px; }
+#cp-hs-dash .cp-reflection-card .cp-refl-text { font-size: 13.5px; color: var(--cp-ink); }
+#cp-hs-dash .cp-reflection-card .cp-refl-kind { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cp-green); }
+
+/* ---------- Toasts ---------- */
+#cp-hs-dash .cp-toast-root {
+  position: fixed; right: 18px; bottom: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 9500;
+  pointer-events: none;
+}
+#cp-hs-dash .cp-toast {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--cp-forest); color: #fff;
+  border-radius: 12px;
+  padding: 12px 17px;
+  box-shadow: 0 10px 30px rgba(15, 61, 30, 0.35);
+  font-size: 14px; font-weight: 600;
+  animation: cpToastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: 320px;
+}
+#cp-hs-dash .cp-toast.cp-toast-out { animation: cpToastOut 0.25s ease forwards; }
+#cp-hs-dash .cp-toast-xp {
+  flex: none;
+  background: var(--cp-lime); color: var(--cp-forest);
+  border-radius: 999px; padding: 3px 10px;
+  font-size: 13px; font-weight: 800;
+}
+#cp-hs-dash .cp-toast.cp-toast-level { background: linear-gradient(135deg, var(--cp-green), var(--cp-lime)); }
+#cp-hs-dash .cp-toast.cp-toast-badge { background: #fff; color: var(--cp-forest); border: 1px solid var(--cp-border); }
+#cp-hs-dash .cp-toast.cp-toast-badge .cp-toast-xp { background: var(--cp-soft-green); color: var(--cp-green); }
+@keyframes cpToastIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes cpToastOut { to { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- Screens ---------- */
+#cp-hs-dash .cp-screen { display: none; animation: cpFadeIn 0.2s ease; }
+#cp-hs-dash .cp-screen.cp-active { display: block; }
+#cp-hs-dash .cp-stack > * + * { margin-top: 18px; }
+
+#cp-hs-dash .cp-footer-note { margin-top: 30px; font-size: 12px; color: #9a978c; text-align: center; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  #cp-hs-dash .cp-grid-2, #cp-hs-dash .cp-grid-3 { grid-template-columns: 1fr; }
+  #cp-hs-dash .cp-rings-row { grid-template-columns: repeat(2, 1fr); }
+  #cp-hs-dash .cp-nav-btn { padding: 9px 13px; font-size: 13.5px; }
+  #cp-hs-dash .cp-hero { padding: 24px 20px; }
+  #cp-hs-dash .cp-nudge { flex-wrap: wrap; }
+  #cp-hs-dash .cp-compare-cols { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cp-hs-dash *, #cp-hs-dash *::before, #cp-hs-dash *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}
+</style>
+</head>
+<body>
+<div id="cp-hs-dash">
+  <div class="cp-shell">
+    <header class="cp-header">
+      <div class="cp-wordmark">
+        <span class="cp-wordmark-name">CloverPath</span>
+        <span class="cp-wordmark-tag">Student Homebase</span>
+      </div>
+      <div class="cp-header-right">
+        <button class="cp-reset-btn" id="cp-reset-demo" type="button">Reset demo</button>
+      </div>
+    </header>
+
+    <nav class="cp-nav" role="tablist" aria-label="Dashboard sections">
+      <button class="cp-nav-btn cp-active" data-screen="home" type="button">Home</button>
+      <button class="cp-nav-btn" data-screen="explore" type="button">Explore</button>
+      <button class="cp-nav-btn" data-screen="mypath" type="button">My Path</button>
+      <button class="cp-nav-btn" data-screen="results" type="button">Aptitude Results</button>
+      <button class="cp-nav-btn" data-screen="achievements" type="button">Achievements</button>
+    </nav>
+
+    <main>
+      <section class="cp-screen cp-active" id="cp-screen-home"></section>
+      <section class="cp-screen" id="cp-screen-explore"></section>
+      <section class="cp-screen" id="cp-screen-mypath"></section>
+      <section class="cp-screen" id="cp-screen-results"></section>
+      <section class="cp-screen" id="cp-screen-achievements"></section>
+    </main>
+
+    <p class="cp-footer-note">Career and college details shown here are illustrative examples for exploration, not official statistics.</p>
+  </div>
+
+  <div class="cp-toast-root" id="cp-toast-root" aria-live="polite"></div>
+  <div id="cp-modal-root"></div>
+  <div id="cp-tray-root"></div>
+</div>
+
+
+<script>
+(function () {
+  'use strict';
+  // Re-entry guard: safe if the host page injects this file twice.
+  if (window.__cpHsDashInitialized) return;
+  window.__cpHsDashInitialized = true;
+
+  /* ============================================================
+     CONFIG
+     ============================================================ */
+
+  // Cooper: set this to the live aptitude module URL before deploy.
+  var APTITUDE_URL = '#';
+
+  var STORAGE_KEY = 'cp_hs_dashboard_v1';
+
+  // Data seam. When LIVE is true, getSessionData() should fetch the
+  // real hs_sessions row instead of returning the mock below.
+  var LIVE = false;
+
+  var MOCK_STUDENT = { firstName: 'Jordan' };
+
+  /* ============================================================
+     MOCK SESSION (matches the hs_sessions schema exactly)
+     ============================================================ */
+
+  var MOCK_SESSION = {
+    id: '7f3c9a1e-52d4-4b8a-9c1f-2e6d8b4a0c73',
+    student_id: null,
+    student_email: 'jordan.avery@student.example.org',
+    organization_id: null,
+    completed: true,
+    created_at: '2026-05-14T15:02:11.000Z',
+    updated_at: '2026-06-21T19:47:36.000Z',
+    completed_at: '2026-05-14T15:41:52.000Z',
+    p1_answers: {
+      fix_hands: 3,
+      lead_sell: 1,
+      build_make: 3,
+      teach_coach: 1,
+      help_support: 1,
+      analyze_solve: 3,
+      compete_train: 1,
+      design_better: 2,
+      create_express: 0,
+      organize_track: 1,
+      explore_research: 2,
+      outdoors_animals: 2,
+      perform_entertain: 0
+    },
+    p2_answers: {
+      build_make: {
+        style: 'hands_on',
+        reflect: 'I lose track of time when I am putting something together. Last month I rebuilt an old go kart frame with my uncle and it was the best weekend I have had in a while.',
+        activities: ['woodshop', 'robotics_club', 'home_projects'],
+        frustration: 'When there is no clear plan and parts are missing.',
+        motivations: ['seeing_finished_result', 'solving_physical_problems']
+      },
+      fix_hands: {
+        style: 'trial_and_error',
+        reflect: 'I am the person my family asks when something breaks. I like figuring out why a thing stopped working more than I like reading about it.',
+        activities: ['fixing_bikes', 'small_engine_repair'],
+        frustration: 'Stripped screws and manuals that skip steps.',
+        motivations: ['being_useful', 'independence']
+      },
+      analyze_solve: {
+        style: 'step_by_step',
+        reflect: 'Math class is fine but I like puzzles more when they connect to something real, like figuring out why the 3D printer keeps jamming.',
+        activities: ['chess', 'strategy_games', 'debugging_prints'],
+        frustration: 'Problems where the answer does not matter to anyone.',
+        motivations: ['curiosity', 'getting_to_the_bottom_of_things']
+      }
+    },
+    surfaced_clusters: ['eng_tech', 'skilled', 'science', 'outdoors'],
+    clusters_viewed: ['eng_tech', 'skilled', 'science', 'health'],
+    majors_viewed: [
+      'Mechanical Engineering',
+      'Computer Science',
+      'Electrical Engineering',
+      'Construction Management',
+      'Welding and Fabrication Technology',
+      'Environmental Science',
+      'Nursing',
+      'Wildlife and Fisheries Management'
+    ],
+    majors_saved: ['Mechanical Engineering', 'Environmental Science'],
+    clusters_saved: ['eng_tech', 'skilled'],
+    schools_saved: ['Austin Community College District', 'Arizona State University Campus Immersion'],
+    comparisons_made: [
+      { type: 'major', a: 'Mechanical Engineering', b: 'Computer Science' }
+    ],
+    p1_completed: true
+  };
+
+  function getSessionData() {
+    if (LIVE) {
+      // Real integration seam. When LIVE is true, replace the return
+      // below with a Supabase fetch of the student's hs_sessions row:
+      //
+      //   const { data, error } = await supabase
+      //     .from('hs_sessions')
+      //     .select('*')
+      //     .eq('student_email', currentStudentEmail)
+      //     .order('updated_at', { ascending: false })
+      //     .limit(1)
+      //     .single();
+      //   return data;
+      //
+      // Everything downstream reads only through this function, so no
+      // other code changes are needed for the swap.
+    }
+    return MOCK_SESSION;
+  }
+
+  /* ============================================================
+     CONTENT CATALOG (illustrative taxonomy; ids stay stable)
+     ============================================================ */
+
+  var ICONS = {
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+    palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    flask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.34 19.03A2 2 0 0 0 6.07 22h11.86a2 2 0 0 0 1.73-2.97L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>',
+    mountain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"/></svg>',
+    compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+    bookmark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
+    scale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.9 5.8L20 9.7l-5 4 1.4 6.3L12 16.6 7.6 20l1.4-6.3-5-4 6.1-1.9L12 2z"/></svg>',
+    grad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>',
+    map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+  };
+
+  var CLUSTERS = [
+    { id: 'eng_tech', name: 'Engineering and Technology', blurb: 'Design, build, and improve the machines, structures, and software the world runs on.', icon: 'gear' },
+    { id: 'skilled', name: 'Skilled Trades', blurb: 'Hands-on careers that keep everything running, from wiring and welding to climate systems.', icon: 'wrench' },
+    { id: 'health', name: 'Health and Medicine', blurb: 'Care for people directly, from bedside nursing to sports medicine and beyond.', icon: 'heart' },
+    { id: 'business', name: 'Business and Entrepreneurship', blurb: 'Lead teams, sell ideas, manage money, or start something of your own.', icon: 'briefcase' },
+    { id: 'creative', name: 'Arts and Creative Media', blurb: 'Tell stories and shape how things look, sound, and feel.', icon: 'palette' },
+    { id: 'public_service', name: 'Law and Public Service', blurb: 'Protect communities and keep systems fair, from courtrooms to first response.', icon: 'shield' },
+    { id: 'science', name: 'Science and Research', blurb: 'Ask hard questions about how the world works and chase the answers with evidence.', icon: 'flask' },
+    { id: 'outdoors', name: 'Outdoors and Environment', blurb: 'Work with land, water, and wildlife instead of behind a desk all day.', icon: 'mountain' }
+  ];
+
+  var MAJORS = [
+    { name: 'Mechanical Engineering', clusterId: 'eng_tech', blurb: 'How machines move, from engines and robots to prosthetics and rockets.', sampleCourses: ['Statics and Dynamics', 'Thermodynamics', 'Machine Design', 'Materials Science'], relatedPaths: ['Mechanical Engineer', 'Robotics Technician'] },
+    { name: 'Computer Science', clusterId: 'eng_tech', blurb: 'Programming, algorithms, and the logic behind every app and game you use.', sampleCourses: ['Intro to Programming', 'Data Structures', 'Computer Systems', 'Algorithms'], relatedPaths: ['Software Developer'] },
+    { name: 'Electrical Engineering', clusterId: 'eng_tech', blurb: 'Circuits, power systems, and the electronics inside everything.', sampleCourses: ['Circuit Analysis', 'Digital Logic', 'Signals and Systems', 'Embedded Systems'], relatedPaths: ['Electrician', 'Robotics Technician'] },
+    { name: 'Construction Management', clusterId: 'skilled', blurb: 'Run job sites and turn blueprints into finished buildings, on time and on budget.', sampleCourses: ['Blueprint Reading', 'Project Scheduling', 'Construction Safety', 'Cost Estimating'], relatedPaths: ['Construction Site Supervisor'] },
+    { name: 'Welding and Fabrication Technology', clusterId: 'skilled', blurb: 'Join and shape metal for everything from pipelines to custom cars.', sampleCourses: ['MIG and TIG Welding', 'Metallurgy Basics', 'Fabrication Layout', 'Welding Codes'], relatedPaths: ['Welder and Fabricator'] },
+    { name: 'HVAC and Energy Systems', clusterId: 'skilled', blurb: 'Heating, cooling, and the energy systems buildings depend on.', sampleCourses: ['Refrigeration Fundamentals', 'Electrical for HVAC', 'System Diagnostics', 'Energy Efficiency'], relatedPaths: ['HVAC Technician'] },
+    { name: 'Nursing', clusterId: 'health', blurb: 'Frontline patient care in hospitals, clinics, schools, and homes.', sampleCourses: ['Anatomy and Physiology', 'Pharmacology', 'Patient Assessment', 'Clinical Rotations'], relatedPaths: ['Registered Nurse'] },
+    { name: 'Criminal Justice', clusterId: 'public_service', blurb: 'How laws, courts, and policing actually work, and how to make them work better.', sampleCourses: ['Intro to Criminal Justice', 'Criminology', 'Constitutional Law', 'Forensics Basics'], relatedPaths: ['Detective and Investigator'] },
+    { name: 'Business Administration', clusterId: 'business', blurb: 'The fundamentals of running any organization: money, people, and strategy.', sampleCourses: ['Accounting Principles', 'Marketing 101', 'Management', 'Business Statistics'], relatedPaths: ['Sales Manager'] },
+    { name: 'Graphic Design', clusterId: 'creative', blurb: 'Visual communication, from logos and posters to apps and packaging.', sampleCourses: ['Typography', 'Design Software Studio', 'Branding', 'Portfolio Development'], relatedPaths: ['Graphic Designer'] },
+    { name: 'Environmental Science', clusterId: 'science', blurb: 'Study ecosystems, climate, and pollution with real field and lab work.', sampleCourses: ['Ecology', 'Environmental Chemistry', 'GIS Mapping', 'Field Methods'], relatedPaths: ['Environmental Scientist', 'Park Ranger'] },
+    { name: 'Wildlife and Fisheries Management', clusterId: 'outdoors', blurb: 'Manage animal populations and habitats across public lands and waters.', sampleCourses: ['Wildlife Biology', 'Habitat Management', 'Conservation Policy', 'Field Techniques'], relatedPaths: ['Park Ranger', 'Environmental Scientist'] }
+  ];
+
+  var PATHS = [
+    { name: 'Mechanical Engineer', clusterId: 'eng_tech', dayInLife: 'Mornings modeling parts in CAD, afternoons testing prototypes and troubleshooting with the shop team.', payRange: '$70k to $110k', outlook: 'Steady demand, strongest in manufacturing and energy' },
+    { name: 'Software Developer', clusterId: 'eng_tech', dayInLife: 'Writing and reviewing code, debugging, and planning features with a small team, often with flexible hours.', payRange: '$75k to $130k', outlook: 'Strong long-term growth' },
+    { name: 'Robotics Technician', clusterId: 'eng_tech', dayInLife: 'Installing, calibrating, and repairing automated systems on factory floors.', payRange: '$50k to $75k', outlook: 'Growing fast as automation spreads' },
+    { name: 'Electrician', clusterId: 'skilled', dayInLife: 'On-site wiring, troubleshooting panels, and reading blueprints, with a mix of new builds and service calls.', payRange: '$50k to $85k', outlook: 'High demand, licensed trade with apprenticeship path' },
+    { name: 'HVAC Technician', clusterId: 'skilled', dayInLife: 'Diagnosing and repairing heating and cooling systems, a different site almost every day.', payRange: '$45k to $75k', outlook: 'Very high demand in growing regions' },
+    { name: 'Welder and Fabricator', clusterId: 'skilled', dayInLife: 'Reading specs, cutting and joining metal, and inspecting your own welds in a shop or on site.', payRange: '$42k to $70k', outlook: 'Steady, with premium pay for specialty welds' },
+    { name: 'Registered Nurse', clusterId: 'health', dayInLife: 'Twelve-hour shifts of patient care, charting, and coordinating with doctors and families.', payRange: '$65k to $95k', outlook: 'Very strong demand nationwide' },
+    { name: 'Environmental Scientist', clusterId: 'science', dayInLife: 'Field sampling some weeks, lab analysis and reports the others.', payRange: '$55k to $85k', outlook: 'Growing with environmental regulation and cleanup work' },
+    { name: 'Park Ranger', clusterId: 'outdoors', dayInLife: 'Patrolling trails, leading visitor programs, and handling everything from wildlife to weather.', payRange: '$40k to $65k', outlook: 'Competitive, seasonal roles are the usual way in' },
+    { name: 'Graphic Designer', clusterId: 'creative', dayInLife: 'Client briefs in the morning, focused design time in the afternoon, revisions in between.', payRange: '$45k to $75k', outlook: 'Steady, portfolio matters more than degree' }
+  ];
+
+  var COLLEGES = [
+    { name: 'Austin Community College District', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems', 'Construction Management', 'Nursing', 'Computer Science'], location: 'Austin, TX', type: 'Community college' },
+    { name: 'Arizona State University Campus Immersion', offersMajors: ['Mechanical Engineering', 'Computer Science', 'Electrical Engineering', 'Business Administration', 'Environmental Science', 'Graphic Design'], location: 'Tempe, AZ', type: 'Public university' },
+    { name: 'University of Tennessee, Knoxville', offersMajors: ['Mechanical Engineering', 'Nursing', 'Environmental Science', 'Business Administration', 'Wildlife and Fisheries Management'], location: 'Knoxville, TN', type: 'Public university' },
+    { name: 'Texas State Technical College', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems', 'Electrical Engineering'], location: 'Waco, TX', type: 'Trade and technical' },
+    { name: 'Colorado State University', offersMajors: ['Environmental Science', 'Wildlife and Fisheries Management', 'Mechanical Engineering', 'Business Administration'], location: 'Fort Collins, CO', type: 'Public university' },
+    { name: 'Southwest Tennessee Community College', offersMajors: ['Nursing', 'HVAC and Energy Systems', 'Criminal Justice', 'Business Administration'], location: 'Memphis, TN', type: 'Community college' },
+    { name: 'Georgia Institute of Technology', offersMajors: ['Mechanical Engineering', 'Computer Science', 'Electrical Engineering'], location: 'Atlanta, GA', type: 'Public university' },
+    { name: 'Auburn University', offersMajors: ['Mechanical Engineering', 'Wildlife and Fisheries Management', 'Business Administration', 'Nursing'], location: 'Auburn, AL', type: 'Public university' },
+    { name: 'Portland Community College', offersMajors: ['Welding and Fabrication Technology', 'Computer Science', 'Graphic Design', 'Criminal Justice'], location: 'Portland, OR', type: 'Community college' },
+    { name: 'University of Colorado Boulder', offersMajors: ['Environmental Science', 'Mechanical Engineering', 'Computer Science'], location: 'Boulder, CO', type: 'Public university' },
+    { name: 'Lincoln College of Technology', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems'], location: 'Nashville, TN', type: 'Trade and technical' },
+    { name: 'University of Memphis', offersMajors: ['Nursing', 'Criminal Justice', 'Business Administration', 'Computer Science', 'Graphic Design'], location: 'Memphis, TN', type: 'Public university' },
+    { name: 'Montana State University', offersMajors: ['Wildlife and Fisheries Management', 'Environmental Science', 'Mechanical Engineering'], location: 'Bozeman, MT', type: 'Public university' },
+    { name: 'Ivy Tech Community College', offersMajors: ['HVAC and Energy Systems', 'Welding and Fabrication Technology', 'Nursing', 'Criminal Justice'], location: 'Indianapolis, IN', type: 'Community college' },
+    { name: 'North Carolina State University', offersMajors: ['Mechanical Engineering', 'Environmental Science', 'Computer Science', 'Wildlife and Fisheries Management'], location: 'Raleigh, NC', type: 'Public university' },
+    { name: 'Pellissippi State Community College', offersMajors: ['Computer Science', 'Business Administration', 'Graphic Design'], location: 'Knoxville, TN', type: 'Community college' }
+  ];
+
+  var INTEREST_LABELS = {
+    fix_hands: 'Fixing with your hands',
+    lead_sell: 'Leading and selling',
+    build_make: 'Building and making',
+    teach_coach: 'Teaching and coaching',
+    help_support: 'Helping and supporting',
+    analyze_solve: 'Analyzing and solving',
+    compete_train: 'Competing and training',
+    design_better: 'Designing improvements',
+    create_express: 'Creating and expressing',
+    organize_track: 'Organizing and tracking',
+    explore_research: 'Exploring and researching',
+    outdoors_animals: 'Outdoors and animals',
+    perform_entertain: 'Performing and entertaining'
+  };
+
+  // Maps Part 2 interest reflections to the field they inform, so the
+  // Reflection ring can credit assessment reflections against surfaced fields.
+  var INTEREST_TO_CLUSTER = {
+    fix_hands: 'skilled',
+    build_make: 'eng_tech',
+    analyze_solve: 'science',
+    explore_research: 'science',
+    outdoors_animals: 'outdoors',
+    design_better: 'eng_tech',
+    help_support: 'health',
+    teach_coach: 'public_service',
+    lead_sell: 'business',
+    create_express: 'creative',
+    perform_entertain: 'creative',
+    organize_track: 'business',
+    compete_train: 'health'
+  };
+
+  /* ============================================================
+     GAMIFICATION CONFIG
+     ============================================================ */
+
+  var XP = {
+    assessment: 100,
+    p1: 25,
+    clusterView: 15,
+    majorView: 10,
+    save: 20,
+    comparison: 30,
+    reflection: 40
+  };
+
+  var LEVELS = [
+    { name: 'Explorer', min: 0 },
+    { name: 'Pathfinder', min: 100 },
+    { name: 'Navigator', min: 300 },
+    { name: 'Trailblazer', min: 600 }
+  ];
+
+  var BADGES = [
+    { id: 'self_starter', name: 'Self-Starter', icon: 'spark', cond: 'Complete Part 1 of the assessment', test: function (w) { return w.p1_completed; } },
+    { id: 'know_thyself', name: 'Know Thyself', icon: 'compass', cond: 'Complete the full aptitude assessment', test: function (w) { return w.completed; } },
+    { id: 'explorer', name: 'Explorer', icon: 'map', cond: 'Open your first career field', test: function (w) { return w.clusters_viewed.length >= 1; } },
+    { id: 'deep_diver', name: 'Deep Diver', icon: 'flask', cond: 'View 5 or more majors', test: function (w) { return w.majors_viewed.length >= 5; } },
+    { id: 'curator', name: 'Curator', icon: 'bookmark', cond: 'Save 5 or more majors, fields, or schools', test: function (w) { return (w.majors_saved.length + w.clusters_saved.length + w.schools_saved.length) >= 5; } },
+    { id: 'cross_examiner', name: 'Cross-Examiner', icon: 'scale', cond: 'Make your first side by side comparison', test: function (w) { return w.comparisons_made.length >= 1; } },
+    { id: 'reflector', name: 'Reflector', icon: 'pencil', cond: 'Write a reflection for every one of your matched fields', test: function (w) { return reflectedClusterCount(w) >= w.surfaced_clusters.length && w.surfaced_clusters.length > 0; } },
+    { id: 'well_rounded', name: 'Well-Rounded', icon: 'star', cond: 'Explore 3 or more different career fields', test: function (w) { return w.clusters_viewed.length >= 3; } }
+  ];
+
+  /* ============================================================
+     PERSISTED STATE (deltas + award ledger only)
+     ============================================================ */
+
+  function blankState() {
+    return {
+      ledger: [],            // XP keys already awarded (idempotency)
+      earnedBadges: [],      // badge ids already announced
+      views: { majors: [], clusters: [] },
+      saves: { majors: [], clusters: [], schools: [] },
+      reflections: {},       // key -> { type, id, text, ts }
+      comparisons: []        // { type, a, b, ts }
+    };
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      var base = blankState();
+      for (var k in base) if (parsed[k] !== undefined) base[k] = parsed[k];
+      return base;
+    } catch (e) { return null; }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
+  }
+
+  var isFirstBoot = false;
+  var state = loadState();
+  if (!state) { state = blankState(); isFirstBoot = true; }
+
+  /* ============================================================
+     WORKING COPY (mock session merged with local deltas)
+     ============================================================ */
+
+  function uniq(arr) {
+    var out = [], seen = {};
+    for (var i = 0; i < arr.length; i++) {
+      var v = arr[i];
+      if (!seen[v]) { seen[v] = true; out.push(v); }
+    }
+    return out;
+  }
+
+  function getWorking() {
+    var s = getSessionData();
+    return {
+      completed: s.completed,
+      p1_completed: s.p1_completed,
+      p1_answers: s.p1_answers,
+      p2_answers: s.p2_answers,
+      surfaced_clusters: s.surfaced_clusters.slice(),
+      clusters_viewed: uniq(s.clusters_viewed.concat(state.views.clusters)),
+      majors_viewed: uniq(s.majors_viewed.concat(state.views.majors)),
+      majors_saved: uniq(s.majors_saved.concat(state.saves.majors)),
+      clusters_saved: uniq(s.clusters_saved.concat(state.saves.clusters)),
+      schools_saved: uniq(s.schools_saved.concat(state.saves.schools)),
+      comparisons_made: s.comparisons_made.concat(state.comparisons)
+    };
+  }
+
+  /* ============================================================
+     XP ENGINE (pure function of the working copy; ledger makes
+     awards idempotent across reloads and re-renders)
+     ============================================================ */
+
+  function cmpKey(c) {
+    var pair = [String(c.a), String(c.b)].sort();
+    return 'cmp:' + c.type + ':' + pair[0] + '|' + pair[1];
+  }
+
+  function collectXpItems(w) {
+    var items = [];
+    if (w.completed) items.push({ key: 'assessment_complete', xp: XP.assessment });
+    if (w.p1_completed) items.push({ key: 'p1_complete', xp: XP.p1 });
+    var i;
+    for (i = 0; i < w.clusters_viewed.length; i++) items.push({ key: 'cv:' + w.clusters_viewed[i], xp: XP.clusterView });
+    for (i = 0; i < w.majors_viewed.length; i++) items.push({ key: 'mv:' + w.majors_viewed[i], xp: XP.majorView });
+    for (i = 0; i < w.majors_saved.length; i++) items.push({ key: 'save:major:' + w.majors_saved[i], xp: XP.save });
+    for (i = 0; i < w.clusters_saved.length; i++) items.push({ key: 'save:cluster:' + w.clusters_saved[i], xp: XP.save });
+    for (i = 0; i < w.schools_saved.length; i++) items.push({ key: 'save:school:' + w.schools_saved[i], xp: XP.save });
+    var seenCmp = {};
+    for (i = 0; i < w.comparisons_made.length; i++) {
+      var ck = cmpKey(w.comparisons_made[i]);
+      if (!seenCmp[ck]) { seenCmp[ck] = true; items.push({ key: ck, xp: XP.comparison }); }
+    }
+    for (var interest in w.p2_answers) {
+      if (w.p2_answers[interest] && w.p2_answers[interest].reflect) items.push({ key: 'refl:p2:' + interest, xp: XP.reflection });
+    }
+    for (var rk in state.reflections) items.push({ key: 'refl:native:' + rk, xp: XP.reflection });
+    // Dedupe on key so nothing can ever double count.
+    var out = [], seen = {};
+    for (i = 0; i < items.length; i++) {
+      if (!seen[items[i].key]) { seen[items[i].key] = true; out.push(items[i]); }
+    }
+    return out;
+  }
+
+  function totalXp(items) {
+    var t = 0;
+    for (var i = 0; i < items.length; i++) t += items[i].xp;
+    return t;
+  }
+
+  function levelFor(xp) {
+    var lvl = LEVELS[0], next = null;
+    for (var i = 0; i < LEVELS.length; i++) {
+      if (xp >= LEVELS[i].min) { lvl = LEVELS[i]; next = LEVELS[i + 1] || null; }
+    }
+    return { level: lvl, next: next };
+  }
+
+  function reflectedClusterCount(w) {
+    var reflected = {};
+    // Part 2 assessment reflections credit the field they map to.
+    for (var interest in w.p2_answers) {
+      if (w.p2_answers[interest] && w.p2_answers[interest].reflect) {
+        var cid = INTEREST_TO_CLUSTER[interest];
+        if (cid) reflected[cid] = true;
+      }
+    }
+    // Native reflections credit their own cluster (or the major's cluster).
+    for (var key in state.reflections) {
+      var r = state.reflections[key];
+      if (r.type === 'cluster') reflected[r.id] = true;
+      if (r.type === 'major') {
+        var m = findMajor(r.id);
+        if (m) reflected[m.clusterId] = true;
+      }
+      if (r.type === 'path') {
+        var p = findPath(r.id);
+        if (p) reflected[p.clusterId] = true;
+      }
+    }
+    var count = 0;
+    for (var i = 0; i < w.surfaced_clusters.length; i++) {
+      if (reflected[w.surfaced_clusters[i]]) count++;
+    }
+    return count;
+  }
+
+  function computeRings(w) {
+    var nonzero = 0;
+    for (var k in w.p1_answers) if (w.p1_answers[k] > 0) nonzero++;
+    var interests = w.p1_completed ? 100 : Math.round((nonzero / 13) * 100);
+    var reflection = w.surfaced_clusters.length ? Math.min(100, Math.round((reflectedClusterCount(w) / w.surfaced_clusters.length) * 100)) : 0;
+    var clustPart = Math.min(1, uniq(w.clusters_viewed).length / 3);
+    var majPart = Math.min(1, w.majors_viewed.length / 8);
+    var exploration = Math.round(((clustPart + majPart) / 2) * 100);
+    var saves = w.majors_saved.length + w.clusters_saved.length + w.schools_saved.length;
+    var savePart = Math.min(1, saves / 6);
+    var cmpPart = Math.min(1, w.comparisons_made.length / 2);
+    var commitment = Math.round((savePart * 0.6 + cmpPart * 0.4) * 100);
+    return [
+      { name: 'Interests', pct: interests, hint: 'From your assessment' },
+      { name: 'Reflection', pct: reflection, hint: 'Fields you have written about' },
+      { name: 'Exploration', pct: exploration, hint: 'Fields and majors opened' },
+      { name: 'Commitment', pct: commitment, hint: 'Saves and comparisons' }
+    ];
+  }
+
+  /* ============================================================
+     RECOMPUTE + AWARD LOOP
+     ============================================================ */
+
+  var lastXpTotal = 0;
+
+  function recompute(actionLabel, opts) {
+    opts = opts || {};
+    var w = getWorking();
+    var items = collectXpItems(w);
+    var xp = totalXp(items);
+
+    var ledgerSet = {};
+    for (var i = 0; i < state.ledger.length; i++) ledgerSet[state.ledger[i]] = true;
+    var newKeys = [], newXp = 0;
+    for (i = 0; i < items.length; i++) {
+      if (!ledgerSet[items[i].key]) {
+        newKeys.push(items[i].key);
+        newXp += items[i].xp;
+        state.ledger.push(items[i].key);
+      }
+    }
+
+    var prevLevel = levelFor(lastXpTotal).level.name;
+    var lvlInfo = levelFor(xp);
+
+    // Badge checks.
+    var earnedSet = {};
+    for (i = 0; i < state.earnedBadges.length; i++) earnedSet[state.earnedBadges[i]] = true;
+    var newBadges = [];
+    for (i = 0; i < BADGES.length; i++) {
+      if (!earnedSet[BADGES[i].id] && BADGES[i].test(w)) {
+        state.earnedBadges.push(BADGES[i].id);
+        newBadges.push(BADGES[i]);
+      }
+    }
+
+    saveState();
+
+    var announce = !isFirstBoot && !opts.silent;
+    if (announce && newXp > 0) {
+      toast('xp', '+' + newXp + ' XP', actionLabel || 'Nice work.');
+    }
+    if (announce && lastXpTotal > 0 && lvlInfo.level.name !== prevLevel && xp > lastXpTotal) {
+      toast('level', lvlInfo.level.name, 'Level up. You are now a ' + lvlInfo.level.name + '.');
+    }
+    if (announce) {
+      for (i = 0; i < newBadges.length; i++) {
+        toast('badge', 'Badge', 'Badge earned: ' + newBadges[i].name + '.');
+      }
+    }
+
+    lastXpTotal = xp;
+    return { working: w, xp: xp, levelInfo: lvlInfo, rings: computeRings(w) };
+  }
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function el(id) { return document.getElementById(id); }
+  function findCluster(id) { for (var i = 0; i < CLUSTERS.length; i++) if (CLUSTERS[i].id === id) return CLUSTERS[i]; return null; }
+  function findMajor(name) { for (var i = 0; i < MAJORS.length; i++) if (MAJORS[i].name === name) return MAJORS[i]; return null; }
+  function findPath(name) { for (var i = 0; i < PATHS.length; i++) if (PATHS[i].name === name) return PATHS[i]; return null; }
+  function findCollege(name) { for (var i = 0; i < COLLEGES.length; i++) if (COLLEGES[i].name === name) return COLLEGES[i]; return null; }
+  function icon(name) { return ICONS[name] || ICONS.compass; }
+
+  function toast(kind, chip, msg) {
+    var root = el('cp-toast-root');
+    if (!root) return;
+    var t = document.createElement('div');
+    t.className = 'cp-toast' + (kind === 'level' ? ' cp-toast-level' : kind === 'badge' ? ' cp-toast-badge' : '');
+    t.innerHTML = '<span class="cp-toast-xp">' + escapeHtml(chip) + '</span><span>' + escapeHtml(msg) + '</span>';
+    root.appendChild(t);
+    setTimeout(function () {
+      t.classList.add('cp-toast-out');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    }, 3400);
+  }
+
+  function ringSvg(pct, size) {
+    size = size || 92;
+    var r = 36, c = 2 * Math.PI * r;
+    var offset = c * (1 - Math.max(0, Math.min(100, pct)) / 100);
+    return '<svg class="cp-ring-svg" width="' + size + '" height="' + size + '" viewBox="0 0 92 92" role="img" aria-label="' + pct + ' percent">' +
+      '<circle class="cp-ring-track" cx="46" cy="46" r="' + r + '" fill="none" stroke-width="9"/>' +
+      '<circle class="cp-ring-fill" cx="46" cy="46" r="' + r + '" fill="none" stroke-width="9" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"/>' +
+      '<text class="cp-ring-pct" x="46" y="51" text-anchor="middle">' + pct + '%</text>' +
+    '</svg>';
+  }
+
+  /* ============================================================
+     NAVIGATION
+     ============================================================ */
+
+  var currentScreen = 'home';
+  var explorePrefs = { tab: 'majors', cluster: 'all' };
+
+  function showScreen(name, prefs) {
+    currentScreen = name;
+    if (prefs) {
+      if (prefs.tab) explorePrefs.tab = prefs.tab;
+      if (prefs.cluster !== undefined) explorePrefs.cluster = prefs.cluster;
+    }
+    var btns = document.querySelectorAll('#cp-hs-dash .cp-nav-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('cp-active', btns[i].getAttribute('data-screen') === name);
+    }
+    var screens = document.querySelectorAll('#cp-hs-dash .cp-screen');
+    for (i = 0; i < screens.length; i++) {
+      screens[i].classList.toggle('cp-active', screens[i].id === 'cp-screen-' + name);
+    }
+    renderAll();
+  }
+
+  /* ============================================================
+     RENDER: HOME
+     ============================================================ */
+
+  function nudgeFor(w) {
+    if (!w.p1_completed) {
+      return { text: 'Your journey starts with the aptitude assessment. It takes about 20 minutes and unlocks your matched fields.', btn: 'Start now', act: function () { window.open(APTITUDE_URL, '_blank'); } };
+    }
+    var reflCount = reflectedClusterCount(w);
+    if (reflCount < w.surfaced_clusters.length) {
+      return { text: 'You have viewed <strong>' + w.majors_viewed.length + ' majors</strong> but reflected on <strong>' + reflCount + ' of ' + w.surfaced_clusters.length + '</strong> matched fields. A quick reflection is worth 40 XP and real clarity.', btn: 'Open a field', act: function () { showScreen('results'); } };
+    }
+    if (w.comparisons_made.length < 2) {
+      return { text: 'You have saved some favorites. Put two of them <strong>side by side</strong> to see which one actually fits you better.', btn: 'Compare majors', act: function () { showScreen('explore', { tab: 'majors' }); } };
+    }
+    var saves = w.majors_saved.length + w.clusters_saved.length + w.schools_saved.length;
+    if (saves < 8) {
+      return { text: 'Your path is taking shape. Browse colleges that offer your <strong>saved majors</strong> and save a couple that interest you.', btn: 'Browse colleges', act: function () { showScreen('explore', { tab: 'colleges' }); } };
+    }
+    return { text: 'You are ahead of the curve. Try opening a <strong>field you have not explored yet</strong>. Surprises are where the best paths hide.', btn: 'Explore fields', act: function () { showScreen('explore', { tab: 'majors', cluster: 'all' }); } };
+  }
+
+  function renderHome(data) {
+    var w = data.working, li = data.levelInfo;
+    var span = li.next ? (li.next.min - li.level.min) : 1;
+    var into = li.next ? (data.xp - li.level.min) : span;
+    var pct = Math.max(0, Math.min(100, Math.round((into / span) * 100)));
+    var xpLabel = li.next
+      ? (data.xp + ' XP, ' + (li.next.min - data.xp) + ' to ' + li.next.name)
+      : (data.xp + ' XP, top level reached');
+    var greeting = w.completed
+      ? 'Welcome back, ' + escapeHtml(MOCK_STUDENT.firstName) + '. Let\u2019s keep exploring who you are.'
+      : 'Hey ' + escapeHtml(MOCK_STUDENT.firstName) + ', ready to find out what fits you?';
+    var ctaLabel = w.completed ? 'Continue exploring' : 'Take the aptitude assessment';
+
+    var earned = [];
+    for (var i = 0; i < BADGES.length; i++) {
+      if (state.earnedBadges.indexOf(BADGES[i].id) !== -1) earned.push(BADGES[i]);
+    }
+    var recent = earned.slice(-3).reverse();
+    var badgeHtml = '';
+    for (i = 0; i < recent.length; i++) {
+      badgeHtml += '<div class="cp-badge"><div class="cp-badge-medal">' + icon(recent[i].icon) + '</div><div><div class="cp-badge-name">' + escapeHtml(recent[i].name) + '</div><div class="cp-badge-desc">' + escapeHtml(recent[i].cond) + '</div></div></div>';
+    }
+    if (!badgeHtml) badgeHtml = '<div class="cp-empty">No badges yet. They start showing up as soon as you explore.</div>';
+
+    var ringsHtml = '';
+    for (i = 0; i < data.rings.length; i++) {
+      var r = data.rings[i];
+      ringsHtml += '<div class="cp-ring-cell">' + ringSvg(r.pct) + '<div class="cp-ring-name">' + escapeHtml(r.name) + '</div><div class="cp-ring-hint">' + escapeHtml(r.hint) + '</div></div>';
+    }
+
+    var nudge = nudgeFor(w);
+
+    el('cp-screen-home').innerHTML =
+      '<div class="cp-hero">' +
+        '<div class="cp-hero-top">' +
+          '<div><h1>' + greeting + '</h1>' +
+          '<p>This is your homebase. Everything you discover about yourself, your fields, your majors, your schools, lives here.</p></div>' +
+          '<span class="cp-level-chip">' + icon('trophy') + escapeHtml(li.level.name) + '</span>' +
+        '</div>' +
+        '<div class="cp-xp-wrap">' +
+          '<div class="cp-xp-labels"><span>Level progress</span><span>' + escapeHtml(xpLabel) + '</span></div>' +
+          '<div class="cp-xp-track"><div class="cp-xp-fill" id="cp-xp-fill"></div></div>' +
+        '</div>' +
+        '<a class="cp-hero-cta" href="' + APTITUDE_URL + '" target="_blank" rel="noopener" id="cp-hero-cta">' + escapeHtml(ctaLabel) + icon('arrow') + '</a>' +
+      '</div>' +
+      '<div class="cp-stack">' +
+        '<div class="cp-nudge">' +
+          '<div class="cp-nudge-icon">' + icon('spark') + '</div>' +
+          '<div class="cp-nudge-text">' + nudge.text + '</div>' +
+          '<button class="cp-nudge-btn" id="cp-nudge-btn" type="button">' + escapeHtml(nudge.btn) + '</button>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Know Yourself</div>' +
+          '<h2 class="cp-section-title">How well do you know yourself?</h2>' +
+          '<p class="cp-section-sub">These four meters grow as you take the assessment, reflect, explore, and commit to favorites. They measure you against your own goals, nobody else\u2019s.</p>' +
+          '<div class="cp-rings-row">' + ringsHtml + '</div>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Recent badges</div>' +
+          '<h2 class="cp-section-title">Latest wins</h2>' +
+          '<p class="cp-section-sub">Your three most recent achievements. See the full trophy case in Achievements.</p>' +
+          '<div class="cp-badge-strip">' + badgeHtml + '</div>' +
+        '</div>' +
+      '</div>';
+
+    var nb = el('cp-nudge-btn');
+    if (nb) nb.addEventListener('click', nudge.act);
+    // Animate the XP bar in after paint.
+    var fill = el('cp-xp-fill');
+    if (fill) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { fill.style.width = pct + '%'; });
+      });
+    }
+  }
+
+  /* ============================================================
+     RENDER: EXPLORE
+     ============================================================ */
+
+  function stateTags(w, type, id) {
+    var viewed = false, saved = false;
+    if (type === 'major') { viewed = w.majors_viewed.indexOf(id) !== -1; saved = w.majors_saved.indexOf(id) !== -1; }
+    if (type === 'cluster') { viewed = w.clusters_viewed.indexOf(id) !== -1; saved = w.clusters_saved.indexOf(id) !== -1; }
+    if (type === 'school') { saved = w.schools_saved.indexOf(id) !== -1; }
+    var html = '';
+    if (saved) html += '<span class="cp-state-tag cp-tag-saved">Saved</span>';
+    else if (viewed) html += '<span class="cp-state-tag cp-tag-viewed">Viewed</span>';
+    return html ? '<div class="cp-state-tags">' + html + '</div>' : '';
+  }
+
+  function renderExplore(data) {
+    var w = data.working;
+    var tabs = [
+      { id: 'majors', label: 'Majors' },
+      { id: 'paths', label: 'Career Paths' },
+      { id: 'colleges', label: 'Colleges' }
+    ];
+    var tabHtml = '';
+    for (var i = 0; i < tabs.length; i++) {
+      tabHtml += '<button class="cp-subtab' + (explorePrefs.tab === tabs[i].id ? ' cp-active' : '') + '" data-extab="' + tabs[i].id + '" type="button">' + tabs[i].label + '</button>';
+    }
+
+    var filterHtml = '';
+    if (explorePrefs.tab !== 'colleges') {
+      filterHtml = '<div class="cp-filter-row"><span class="cp-item-meta">Field:</span>' +
+        '<button class="cp-chip' + (explorePrefs.cluster === 'all' ? ' cp-active' : '') + '" data-exfilter="all" type="button">All</button>';
+      for (i = 0; i < CLUSTERS.length; i++) {
+        var isMatch = w.surfaced_clusters.indexOf(CLUSTERS[i].id) !== -1;
+        filterHtml += '<button class="cp-chip' + (explorePrefs.cluster === CLUSTERS[i].id ? ' cp-active' : '') + '" data-exfilter="' + CLUSTERS[i].id + '" type="button">' + escapeHtml(CLUSTERS[i].name) + (isMatch ? ' (match)' : '') + '</button>';
+      }
+      filterHtml += '</div>';
+    }
+
+    var cardsHtml = '';
+    if (explorePrefs.tab === 'majors') {
+      for (i = 0; i < MAJORS.length; i++) {
+        var m = MAJORS[i];
+        if (explorePrefs.cluster !== 'all' && m.clusterId !== explorePrefs.cluster) continue;
+        var c = findCluster(m.clusterId);
+        cardsHtml += '<button class="cp-item-card" data-open="major" data-id="' + escapeHtml(m.name) + '" type="button">' +
+          stateTags(w, 'major', m.name) +
+          '<div class="cp-item-icon">' + icon(c ? c.icon : 'grad') + '</div>' +
+          '<div class="cp-item-name">' + escapeHtml(m.name) + '</div>' +
+          '<div class="cp-item-blurb">' + escapeHtml(m.blurb) + '</div>' +
+          '<div class="cp-item-meta">' + escapeHtml(c ? c.name : '') + '</div></button>';
+      }
+    } else if (explorePrefs.tab === 'paths') {
+      for (i = 0; i < PATHS.length; i++) {
+        var p = PATHS[i];
+        if (explorePrefs.cluster !== 'all' && p.clusterId !== explorePrefs.cluster) continue;
+        var pc = findCluster(p.clusterId);
+        cardsHtml += '<button class="cp-item-card" data-open="path" data-id="' + escapeHtml(p.name) + '" type="button">' +
+          '<div class="cp-item-icon">' + icon(pc ? pc.icon : 'compass') + '</div>' +
+          '<div class="cp-item-name">' + escapeHtml(p.name) + '</div>' +
+          '<div class="cp-item-blurb">' + escapeHtml(p.dayInLife) + '</div>' +
+          '<div class="cp-item-meta">' + escapeHtml(p.payRange) + ' \u00b7 ' + escapeHtml(pc ? pc.name : '') + '</div></button>';
+      }
+    } else {
+      for (i = 0; i < COLLEGES.length; i++) {
+        var col = COLLEGES[i];
+        cardsHtml += '<button class="cp-item-card" data-open="school" data-id="' + escapeHtml(col.name) + '" type="button">' +
+          stateTags(w, 'school', col.name) +
+          '<div class="cp-item-icon">' + icon('grad') + '</div>' +
+          '<div class="cp-item-name">' + escapeHtml(col.name) + '</div>' +
+          '<div class="cp-item-blurb">' + escapeHtml(col.type) + ' in ' + escapeHtml(col.location) + '</div>' +
+          '<div class="cp-item-meta">Offers ' + col.offersMajors.length + ' of your explorable majors</div></button>';
+      }
+    }
+    if (!cardsHtml) cardsHtml = '<div class="cp-empty">Nothing in this field yet. Try another filter.</div>';
+
+    el('cp-screen-explore').innerHTML =
+      '<div class="cp-eyebrow">Explore</div>' +
+      '<h2 class="cp-section-title">Browse majors, careers, and colleges</h2>' +
+      '<p class="cp-section-sub">Open anything that looks interesting. Saving, reflecting, and comparing all earn XP and sharpen your picture of yourself. Fields tagged (match) came from your assessment.</p>' +
+      '<div class="cp-subtabs">' + tabHtml + '</div>' +
+      filterHtml +
+      '<div class="cp-item-grid">' + cardsHtml + '</div>';
+
+    bind('#cp-screen-explore [data-extab]', function (btn) {
+      explorePrefs.tab = btn.getAttribute('data-extab');
+      renderExplore(recompute(null, { silent: true }));
+    });
+    bind('#cp-screen-explore [data-exfilter]', function (btn) {
+      explorePrefs.cluster = btn.getAttribute('data-exfilter');
+      renderExplore(recompute(null, { silent: true }));
+    });
+    bind('#cp-screen-explore [data-open]', function (btn) {
+      openDetail(btn.getAttribute('data-open'), btn.getAttribute('data-id'));
+    });
+  }
+
+  function bind(selector, fn) {
+    var nodes = document.querySelectorAll('#cp-hs-dash ' + selector);
+    for (var i = 0; i < nodes.length; i++) {
+      (function (node) { node.addEventListener('click', function () { fn(node); }); })(nodes[i]);
+    }
+  }
+
+  /* ============================================================
+     DETAIL MODAL + NATIVE INTERACTIONS (Save / Reflect / Compare)
+     ============================================================ */
+
+  var compareTray = null; // { type: 'major'|'school', items: [name] }
+
+  function reflKeyFor(type, id) { return type + ':' + id; }
+
+  function markViewed(type, id) {
+    var changed = false;
+    if (type === 'major') {
+      var w = getWorking();
+      if (w.majors_viewed.indexOf(id) === -1) { state.views.majors.push(id); changed = true; }
+    }
+    if (type === 'cluster') {
+      var w2 = getWorking();
+      if (w2.clusters_viewed.indexOf(id) === -1) { state.views.clusters.push(id); changed = true; }
+    }
+    if (changed) saveState();
+    return changed;
+  }
+
+  function openDetail(type, id) {
+    var labelMap = { major: 'Major', path: 'Career path', school: 'College', cluster: 'Career field' };
+    var title = id, sub = '', blocks = '', canSave = false, canCompare = false, saveLabel = 'Save';
+    var w0 = getWorking();
+
+    if (type === 'major') {
+      var m = findMajor(id); if (!m) return;
+      var mc = findCluster(m.clusterId);
+      sub = (mc ? mc.name : '') + ' \u00b7 ' + m.blurb;
+      blocks =
+        '<div class="cp-detail-block"><h4>Sample courses</h4><ul>' + m.sampleCourses.map(function (x) { return '<li>' + escapeHtml(x) + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="cp-detail-block"><h4>Where it can lead</h4><p>' + m.relatedPaths.map(escapeHtml).join(', ') + '</p></div>';
+      canSave = true; canCompare = true;
+    } else if (type === 'path') {
+      var p = findPath(id); if (!p) return;
+      var pc = findCluster(p.clusterId);
+      sub = pc ? pc.name : '';
+      blocks =
+        '<div class="cp-detail-block"><h4>A day in the life</h4><p>' + escapeHtml(p.dayInLife) + '</p></div>' +
+        '<div class="cp-detail-block"><h4>Typical pay</h4><p>' + escapeHtml(p.payRange) + '</p><h4 style="margin-top:10px">Outlook</h4><p>' + escapeHtml(p.outlook) + '</p>' +
+        '<p class="cp-illustrative-note">Pay and outlook shown are illustrative, not official statistics.</p></div>';
+    } else if (type === 'school') {
+      var col = findCollege(id); if (!col) return;
+      sub = col.type + ' \u00b7 ' + col.location;
+      var offered = col.offersMajors.map(function (name) {
+        var savedMark = w0.majors_saved.indexOf(name) !== -1 ? ' (saved)' : '';
+        return '<li>' + escapeHtml(name) + savedMark + '</li>';
+      }).join('');
+      blocks = '<div class="cp-detail-block"><h4>Offers these majors</h4><ul>' + offered + '</ul></div>';
+      canSave = true; canCompare = true;
+    } else if (type === 'cluster') {
+      var cl = findCluster(id); if (!cl) return;
+      title = cl.name;
+      sub = cl.blurb;
+      var inField = MAJORS.filter(function (mm) { return mm.clusterId === id; });
+      blocks = '<div class="cp-detail-block"><h4>Majors in this field</h4><ul>' + inField.map(function (mm) { return '<li>' + escapeHtml(mm.name) + '</li>'; }).join('') + '</ul></div>';
+      canSave = true;
+    } else { return; }
+
+    // First-time view earns XP (majors and clusters only, matching the schema arrays).
+    var viewedNow = markViewed(type, id);
+
+    var w = getWorking();
+    var savedArr = type === 'major' ? w.majors_saved : type === 'school' ? w.schools_saved : type === 'cluster' ? w.clusters_saved : [];
+    var isSaved = savedArr.indexOf(id) !== -1;
+    var rKey = reflKeyFor(type, id);
+    var existingRefl = state.reflections[rKey];
+    var inTray = compareTray && compareTray.type === (type === 'school' ? 'school' : 'major') && compareTray.items.indexOf(id) !== -1;
+
+    var actions = '<div class="cp-action-row">';
+    if (canSave) {
+      actions += '<button class="cp-action-btn cp-btn-save" id="cp-act-save" type="button"' + (isSaved ? ' disabled' : '') + '>' + icon(isSaved ? 'check' : 'bookmark') + (isSaved ? 'Saved' : saveLabel) + '</button>';
+    }
+    actions += '<button class="cp-action-btn cp-btn-reflect" id="cp-act-reflect" type="button">' + icon('pencil') + (existingRefl ? 'Edit reflection' : 'Reflect') + '</button>';
+    if (canCompare) {
+      actions += '<button class="cp-action-btn cp-btn-compare' + (inTray ? ' cp-in-tray' : '') + '" id="cp-act-compare" type="button">' + icon('scale') + (inTray ? 'In compare tray' : 'Compare') + '</button>';
+    }
+    actions += '</div><p class="cp-xp-hint">Save +' + XP.save + ' XP \u00b7 Reflect +' + XP.reflection + ' XP \u00b7 Compare +' + XP.comparison + ' XP. Each earns once per item.</p>';
+
+    var reflBlock = '';
+    if (existingRefl) {
+      reflBlock = '<div class="cp-reflect-saved" id="cp-refl-display"><strong>Your reflection</strong>' + escapeHtml(existingRefl.text) + '</div>';
+    }
+
+    openModal(
+      '<div class="cp-modal-head"><div><div class="cp-eyebrow">' + escapeHtml(labelMap[type]) + '</div>' +
+      '<h2 class="cp-modal-title">' + escapeHtml(title) + '</h2></div>' +
+      '<button class="cp-modal-close" id="cp-modal-close" type="button" aria-label="Close">' + icon('x') + '</button></div>' +
+      '<p class="cp-modal-sub">' + escapeHtml(sub) + '</p>' +
+      blocks + actions + reflBlock +
+      '<div id="cp-reflect-slot"></div>'
+    );
+
+    if (viewedNow) {
+      recompute('You opened ' + (type === 'cluster' ? title : id) + ' for the first time.');
+    } else {
+      recompute(null, { silent: true });
+    }
+
+    var saveBtn = el('cp-act-save');
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+      if (type === 'major' && state.saves.majors.indexOf(id) === -1) state.saves.majors.push(id);
+      if (type === 'school' && state.saves.schools.indexOf(id) === -1) state.saves.schools.push(id);
+      if (type === 'cluster' && state.saves.clusters.indexOf(id) === -1) state.saves.clusters.push(id);
+      saveState();
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = icon('check') + 'Saved';
+      recompute('Saved to your path.');
+      renderAll();
+    });
+
+    var reflBtn = el('cp-act-reflect');
+    if (reflBtn) reflBtn.addEventListener('click', function () {
+      var slot = el('cp-reflect-slot');
+      if (!slot || slot.innerHTML) return;
+      slot.innerHTML =
+        '<div class="cp-reflect-form">' +
+          '<label for="cp-refl-text">Could you see yourself here? What surprised you?</label>' +
+          '<textarea id="cp-refl-text" maxlength="1000" placeholder="A sentence or two is plenty."></textarea>' +
+          '<div class="cp-action-row"><button class="cp-action-btn cp-btn-reflect" id="cp-refl-submit" type="button">' + icon('check') + 'Save reflection</button></div>' +
+        '</div>';
+      var existing = state.reflections[rKey];
+      var ta = el('cp-refl-text');
+      if (existing && ta) ta.value = existing.text;
+      if (ta) ta.focus();
+      el('cp-refl-submit').addEventListener('click', function () {
+        var text = (ta.value || '').trim();
+        if (!text) { ta.focus(); return; }
+        var firstTime = !state.reflections[rKey];
+        state.reflections[rKey] = { type: type, id: id, text: text, ts: Date.now() };
+        saveState();
+        slot.innerHTML = '';
+        var disp = el('cp-refl-display');
+        var safe = '<strong>Your reflection</strong>' + escapeHtml(text);
+        if (disp) { disp.innerHTML = safe; }
+        else {
+          var d = document.createElement('div');
+          d.className = 'cp-reflect-saved'; d.id = 'cp-refl-display';
+          d.innerHTML = safe;
+          slot.parentNode.insertBefore(d, slot);
+        }
+        recompute(firstTime ? 'Reflection saved. This is the real work.' : null, { silent: !firstTime });
+        if (!firstTime) toast('badge', 'Updated', 'Reflection updated.');
+        renderAll();
+      });
+    });
+
+    var cmpBtn = el('cp-act-compare');
+    if (cmpBtn) cmpBtn.addEventListener('click', function () {
+      addToCompare(type === 'school' ? 'school' : 'major', id);
+    });
+  }
+
+  function addToCompare(cmpType, id) {
+    if (!compareTray || compareTray.type !== cmpType) compareTray = { type: cmpType, items: [] };
+    if (compareTray.items.indexOf(id) !== -1) { renderTray(); return; }
+    compareTray.items.push(id);
+    if (compareTray.items.length >= 2) {
+      var a = compareTray.items[0], b = compareTray.items[1];
+      compareTray = null;
+      renderTray();
+      closeModal();
+      recordComparison(cmpType, a, b);
+    } else {
+      closeModal();
+      renderTray();
+      toast('badge', '1 of 2', 'Pick one more ' + (cmpType === 'school' ? 'college' : 'major') + ' to compare.');
+    }
+  }
+
+  function recordComparison(cmpType, a, b) {
+    var entry = { type: cmpType, a: a, b: b, ts: Date.now() };
+    var key = cmpKey(entry);
+    var exists = false;
+    var all = getWorking().comparisons_made;
+    for (var i = 0; i < all.length; i++) if (cmpKey(all[i]) === key) exists = true;
+    if (!exists) {
+      state.comparisons.push(entry);
+      saveState();
+    }
+    showComparison(cmpType, a, b);
+    recompute(exists ? null : 'Comparison complete.', { silent: exists });
+    renderAll();
+  }
+
+  function comparisonColumn(cmpType, id) {
+    if (cmpType === 'major') {
+      var m = findMajor(id);
+      if (!m) return '<div class="cp-compare-col"><h3>' + escapeHtml(id) + '</h3></div>';
+      var c = findCluster(m.clusterId);
+      return '<div class="cp-compare-col"><h3>' + escapeHtml(m.name) + '</h3>' +
+        '<div class="cp-compare-field"><h5>Field</h5><p>' + escapeHtml(c ? c.name : '') + '</p></div>' +
+        '<div class="cp-compare-field"><h5>What it is</h5><p>' + escapeHtml(m.blurb) + '</p></div>' +
+        '<div class="cp-compare-field"><h5>Sample courses</h5><p>' + m.sampleCourses.map(escapeHtml).join(', ') + '</p></div>' +
+        '<div class="cp-compare-field"><h5>Leads to</h5><p>' + m.relatedPaths.map(escapeHtml).join(', ') + '</p></div></div>';
+    }
+    var col = findCollege(id);
+    if (!col) return '<div class="cp-compare-col"><h3>' + escapeHtml(id) + '</h3></div>';
+    return '<div class="cp-compare-col"><h3>' + escapeHtml(col.name) + '</h3>' +
+      '<div class="cp-compare-field"><h5>Type</h5><p>' + escapeHtml(col.type) + '</p></div>' +
+      '<div class="cp-compare-field"><h5>Location</h5><p>' + escapeHtml(col.location) + '</p></div>' +
+      '<div class="cp-compare-field"><h5>Offers</h5><p>' + col.offersMajors.map(escapeHtml).join(', ') + '</p></div></div>';
+  }
+
+  function showComparison(cmpType, a, b) {
+    openModal(
+      '<div class="cp-modal-head"><div><div class="cp-eyebrow">Side by side</div>' +
+      '<h2 class="cp-modal-title">' + escapeHtml(a) + ' vs ' + escapeHtml(b) + '</h2></div>' +
+      '<button class="cp-modal-close" id="cp-modal-close" type="button" aria-label="Close">' + icon('x') + '</button></div>' +
+      '<div class="cp-compare-cols">' + comparisonColumn(cmpType, a) + comparisonColumn(cmpType, b) + '</div>'
+    );
+  }
+
+  function renderTray() {
+    var root = el('cp-tray-root');
+    if (!compareTray || compareTray.items.length === 0) { root.innerHTML = ''; return; }
+    root.innerHTML =
+      '<div class="cp-compare-tray"><span>Comparing: ' + escapeHtml(compareTray.items[0]) + '. Pick one more ' + (compareTray.type === 'school' ? 'college' : 'major') + '.</span>' +
+      '<button id="cp-tray-cancel" type="button">Cancel</button></div>';
+    el('cp-tray-cancel').addEventListener('click', function () {
+      compareTray = null;
+      renderTray();
+    });
+  }
+
+  function openModal(inner) {
+    var root = el('cp-modal-root');
+    root.innerHTML = '<div class="cp-modal-overlay" id="cp-modal-overlay"><div class="cp-modal" role="dialog" aria-modal="true">' + inner + '</div></div>';
+    var overlay = el('cp-modal-overlay');
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    var close = el('cp-modal-close');
+    if (close) close.addEventListener('click', closeModal);
+  }
+
+  function closeModal() {
+    el('cp-modal-root').innerHTML = '';
+    renderAll();
+  }
+
+  /* ============================================================
+     RENDER: MY PATH
+     ============================================================ */
+
+  function renderMyPath(data) {
+    var w = data.working;
+
+    function emptyBlock(msg, btnLabel, act) {
+      return '<div class="cp-empty">' + msg + '<br><button type="button" data-empty-act="' + act + '">' + btnLabel + '</button></div>';
+    }
+
+    var fieldsHtml = '';
+    for (var i = 0; i < w.clusters_saved.length; i++) {
+      var c = findCluster(w.clusters_saved[i]);
+      if (!c) continue;
+      fieldsHtml += '<button class="cp-item-card" data-open="cluster" data-id="' + escapeHtml(c.id) + '" type="button">' +
+        '<div class="cp-item-icon">' + icon(c.icon) + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(c.name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(c.blurb) + '</div></button>';
+    }
+    if (!fieldsHtml) fieldsHtml = emptyBlock('No saved fields yet. Your assessment results are a great place to start.', 'See my results', 'results');
+
+    var majorsHtml = '';
+    for (i = 0; i < w.majors_saved.length; i++) {
+      var m = findMajor(w.majors_saved[i]);
+      if (!m) continue;
+      var mc = findCluster(m.clusterId);
+      majorsHtml += '<button class="cp-item-card" data-open="major" data-id="' + escapeHtml(m.name) + '" type="button">' +
+        '<div class="cp-item-icon">' + icon(mc ? mc.icon : 'grad') + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(m.name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(m.blurb) + '</div></button>';
+    }
+    if (!majorsHtml) majorsHtml = emptyBlock('No saved majors yet. Browse and save the ones that spark something.', 'Explore majors', 'explore-majors');
+
+    var schoolsHtml = '';
+    for (i = 0; i < w.schools_saved.length; i++) {
+      var col = findCollege(w.schools_saved[i]);
+      var name = col ? col.name : w.schools_saved[i];
+      var meta = col ? (col.type + ' in ' + col.location) : '';
+      schoolsHtml += '<button class="cp-item-card" data-open="school" data-id="' + escapeHtml(name) + '" type="button">' +
+        '<div class="cp-item-icon">' + icon('grad') + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(meta) + '</div></button>';
+    }
+    if (!schoolsHtml) schoolsHtml = emptyBlock('No saved schools yet. Find colleges that offer your saved majors.', 'Browse colleges', 'explore-colleges');
+
+    var reflHtml = '';
+    for (var interest in w.p2_answers) {
+      var ans = w.p2_answers[interest];
+      if (!ans || !ans.reflect) continue;
+      reflHtml += '<div class="cp-reflection-card"><span class="cp-refl-kind">From your assessment</span>' +
+        '<div class="cp-refl-item">' + escapeHtml(INTEREST_LABELS[interest] || interest) + '</div>' +
+        '<div class="cp-refl-text">' + escapeHtml(ans.reflect) + '</div></div>';
+    }
+    var reflKeys = Object.keys(state.reflections).sort(function (a, b) { return state.reflections[a].ts - state.reflections[b].ts; });
+    for (i = 0; i < reflKeys.length; i++) {
+      var r = state.reflections[reflKeys[i]];
+      var label = r.type === 'cluster' ? (findCluster(r.id) ? findCluster(r.id).name : r.id) : r.id;
+      reflHtml += '<div class="cp-reflection-card"><span class="cp-refl-kind">Written here</span>' +
+        '<div class="cp-refl-item">' + escapeHtml(label) + '</div>' +
+        '<div class="cp-refl-text">' + escapeHtml(r.text) + '</div></div>';
+    }
+    if (!reflHtml) reflHtml = emptyBlock('No reflections yet. They are worth the most XP for a reason.', 'Open a major to reflect', 'explore-majors');
+
+    var cmpHtml = '';
+    var seenCmp = {};
+    for (i = 0; i < w.comparisons_made.length; i++) {
+      var cm = w.comparisons_made[i];
+      var key = cmpKey(cm);
+      if (seenCmp[key]) continue;
+      seenCmp[key] = true;
+      cmpHtml += '<button class="cp-item-card" data-recompare=\'' + escapeHtml(JSON.stringify({ type: cm.type, a: cm.a, b: cm.b })) + '\' type="button">' +
+        '<div class="cp-item-icon">' + icon('scale') + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(cm.a) + ' vs ' + escapeHtml(cm.b) + '</div>' +
+        '<div class="cp-item-meta">' + (cm.type === 'school' ? 'Colleges' : 'Majors') + ' \u00b7 tap to reopen</div></button>';
+    }
+    if (!cmpHtml) cmpHtml = emptyBlock('No comparisons yet. Putting two options side by side is a fast way to learn what you care about.', 'Start comparing', 'explore-majors');
+
+    el('cp-screen-mypath').innerHTML =
+      '<div class="cp-eyebrow">My Path</div>' +
+      '<h2 class="cp-section-title">Everything you have collected</h2>' +
+      '<p class="cp-section-sub">Your saved fields, majors, and schools, plus every reflection and comparison you have made.</p>' +
+      '<div class="cp-stack">' +
+        '<div class="cp-card"><h3 class="cp-section-title" style="font-size:19px">Saved fields</h3><div class="cp-item-grid" style="margin-top:12px">' + fieldsHtml + '</div></div>' +
+        '<div class="cp-card"><h3 class="cp-section-title" style="font-size:19px">Saved majors</h3><div class="cp-item-grid" style="margin-top:12px">' + majorsHtml + '</div></div>' +
+        '<div class="cp-card"><h3 class="cp-section-title" style="font-size:19px">Saved schools</h3><div class="cp-item-grid" style="margin-top:12px">' + schoolsHtml + '</div></div>' +
+        '<div class="cp-card"><h3 class="cp-section-title" style="font-size:19px">Reflections</h3><div class="cp-grid cp-grid-2" style="margin-top:12px">' + reflHtml + '</div></div>' +
+        '<div class="cp-card"><h3 class="cp-section-title" style="font-size:19px">Comparisons</h3><div class="cp-item-grid" style="margin-top:12px">' + cmpHtml + '</div></div>' +
+      '</div>';
+
+    bind('#cp-screen-mypath [data-open]', function (btn) {
+      openDetail(btn.getAttribute('data-open'), btn.getAttribute('data-id'));
+    });
+    bind('#cp-screen-mypath [data-recompare]', function (btn) {
+      try {
+        var cm = JSON.parse(btn.getAttribute('data-recompare'));
+        showComparison(cm.type === 'school' ? 'school' : 'major', cm.a, cm.b);
+      } catch (e) { /* malformed */ }
+    });
+    bind('#cp-screen-mypath [data-empty-act]', function (btn) {
+      var act = btn.getAttribute('data-empty-act');
+      if (act === 'results') showScreen('results');
+      if (act === 'explore-majors') showScreen('explore', { tab: 'majors' });
+      if (act === 'explore-colleges') showScreen('explore', { tab: 'colleges' });
+    });
+  }
+
+  /* ============================================================
+     RENDER: APTITUDE RESULTS
+     ============================================================ */
+
+  function renderResults(data) {
+    var w = data.working;
+    var root = el('cp-screen-results');
+
+    if (!w.p1_completed) {
+      root.innerHTML =
+        '<div class="cp-card cp-locked-state">' +
+          '<div class="cp-item-icon">' + icon('lock') + '</div>' +
+          '<h2 class="cp-section-title">Your results are waiting</h2>' +
+          '<p class="cp-section-sub">Take the aptitude assessment to unlock your interest profile and matched career fields.</p>' +
+          '<a class="cp-hero-cta" href="' + APTITUDE_URL + '" target="_blank" rel="noopener" style="margin-top:6px">Take the aptitude assessment' + icon('arrow') + '</a>' +
+        '</div>';
+      return;
+    }
+
+    // Hand-rolled horizontal bar chart, highest first.
+    var entries = [];
+    for (var k in w.p1_answers) entries.push({ key: k, score: w.p1_answers[k] });
+    entries.sort(function (a, b) { return b.score - a.score; });
+
+    var rowH = 34, labelW = 195, chartW = 620, barMax = chartW - labelW - 50;
+    var svg = '<svg viewBox="0 0 ' + chartW + ' ' + (entries.length * rowH + 6) + '" width="100%" role="img" aria-label="Interest profile chart">';
+    for (var i = 0; i < entries.length; i++) {
+      var e = entries[i];
+      var y = i * rowH + 4;
+      var barW = Math.max(4, (e.score / 3) * barMax);
+      var top = i < 3 && e.score > 0;
+      svg += '<text class="cp-bar-label" x="' + (labelW - 10) + '" y="' + (y + 17) + '" text-anchor="end">' + escapeHtml(INTEREST_LABELS[e.key] || e.key) + '</text>';
+      svg += '<rect class="cp-bar-track" x="' + labelW + '" y="' + (y + 6) + '" width="' + barMax + '" height="14" rx="7"/>';
+      svg += '<rect class="cp-bar-fill' + (top ? ' cp-bar-top' : '') + '" x="' + labelW + '" y="' + (y + 6) + '" width="' + barW + '" height="14" rx="7"/>';
+      svg += '<text class="cp-bar-value" x="' + (labelW + barW + 8) + '" y="' + (y + 17) + '">' + e.score + '</text>';
+    }
+    svg += '</svg>';
+
+    var matchHtml = '';
+    for (i = 0; i < w.surfaced_clusters.length; i++) {
+      var c = findCluster(w.surfaced_clusters[i]);
+      if (!c) continue;
+      var saved = w.clusters_saved.indexOf(c.id) !== -1;
+      matchHtml += '<div class="cp-item-card" style="cursor:default">' +
+        (saved ? '<div class="cp-state-tags"><span class="cp-state-tag cp-tag-saved">Saved</span></div>' : '') +
+        '<div class="cp-item-icon">' + icon(c.icon) + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(c.name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(c.blurb) + '</div>' +
+        '<div class="cp-action-row" style="margin-top:6px">' +
+          '<button class="cp-action-btn cp-btn-compare" data-explore-cluster="' + escapeHtml(c.id) + '" type="button" style="padding:7px 15px;font-size:13px">Explore this field</button>' +
+          (saved ? '' : '<button class="cp-action-btn cp-btn-save" data-save-cluster="' + escapeHtml(c.id) + '" type="button" style="padding:7px 15px;font-size:13px">' + icon('bookmark') + 'Save</button>') +
+        '</div></div>';
+    }
+
+    root.innerHTML =
+      '<div class="cp-eyebrow">Aptitude Results</div>' +
+      '<h2 class="cp-section-title">Your interest profile</h2>' +
+      '<p class="cp-section-sub">From the assessment you completed. Scores run 0 to 3, and your top interests are highlighted.</p>' +
+      '<div class="cp-stack">' +
+        '<div class="cp-card cp-chart-wrap">' + svg + '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Matched fields</div>' +
+          '<h3 class="cp-section-title" style="font-size:19px">Where your interests point</h3>' +
+          '<p class="cp-section-sub">These fields matched your answers. Open one and start digging.</p>' +
+          '<div class="cp-item-grid">' + matchHtml + '</div>' +
+        '</div>' +
+      '</div>';
+
+    bind('#cp-screen-results [data-explore-cluster]', function (btn) {
+      showScreen('explore', { tab: 'majors', cluster: btn.getAttribute('data-explore-cluster') });
+    });
+    bind('#cp-screen-results [data-save-cluster]', function (btn) {
+      var cid = btn.getAttribute('data-save-cluster');
+      if (state.saves.clusters.indexOf(cid) === -1) state.saves.clusters.push(cid);
+      saveState();
+      recompute('Field saved to your path.');
+      renderAll();
+    });
+  }
+
+  /* ============================================================
+     RENDER: ACHIEVEMENTS
+     ============================================================ */
+
+  function renderAchievements(data) {
+    var html = '';
+    for (var i = 0; i < BADGES.length; i++) {
+      var b = BADGES[i];
+      var earned = state.earnedBadges.indexOf(b.id) !== -1;
+      html += '<div class="cp-trophy ' + (earned ? 'cp-earned' : 'cp-locked') + '">' +
+        '<div class="cp-badge-medal">' + icon(earned ? b.icon : 'lock') + '</div>' +
+        '<div class="cp-trophy-name">' + escapeHtml(b.name) + '</div>' +
+        '<div class="cp-trophy-cond">' + escapeHtml(b.cond) + '</div>' +
+        (earned ? '<span class="cp-trophy-earned-tag">Earned</span>' : '') +
+      '</div>';
+    }
+    el('cp-screen-achievements').innerHTML =
+      '<div class="cp-eyebrow">Achievements</div>' +
+      '<h2 class="cp-section-title">Trophy case</h2>' +
+      '<p class="cp-section-sub">Every badge you can earn. Locked ones show exactly how to unlock them.</p>' +
+      '<div class="cp-trophy-grid">' + html + '</div>';
+  }
+
+  /* ============================================================
+     RENDER ALL + INIT
+     ============================================================ */
+
+  function renderAll() {
+    var data = recompute(null, { silent: true });
+    if (currentScreen === 'home') renderHome(data);
+    if (currentScreen === 'explore') renderExplore(data);
+    if (currentScreen === 'mypath') renderMyPath(data);
+    if (currentScreen === 'results') renderResults(data);
+    if (currentScreen === 'achievements') renderAchievements(data);
+  }
+
+  // Nav wiring.
+  bind('.cp-nav-btn', function (btn) { showScreen(btn.getAttribute('data-screen')); });
+
+  // Reset demo.
+  el('cp-reset-demo').addEventListener('click', function () {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    window.location.reload();
+  });
+
+  // Iframe auto-height reporting for the Webflow embed.
+  var dashRoot = document.getElementById('cp-hs-dash');
+  function postHeight() {
+    var h = Math.ceil(dashRoot.getBoundingClientRect().height);
+    try {
+      window.parent.postMessage({ type: 'CP_HS_DASH_RESIZE', height: h }, '*');
+    } catch (e) { /* not embedded */ }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(postHeight).observe(dashRoot);
+  } else {
+    window.addEventListener('resize', postHeight);
+  }
+  postHeight();
+
+  // First boot: seed the ledger and badges silently from the mock
+  // session so historical activity never re-toasts.
+  recompute(null, { silent: true });
+  isFirstBoot = false;
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
