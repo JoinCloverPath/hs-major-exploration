@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloverPath Student Dashboard</title>
+<style>
+/* ============================================================
+   CloverPath HS Dashboard
+   All styles scoped under #cp-hs-dash so nothing leaks into a
+   host Webflow page when embedded via iframe.
+   ============================================================ */
+
+#cp-hs-dash {
+  --cp-green: #008208;
+  --cp-lime: #7BBC00;
+  --cp-cream: #f5f6f7;
+  --cp-forest: #0F3D1E;
+  --cp-ink: #16211A;
+  --cp-border: #e2e5e8;
+  --cp-card: #ffffff;
+  --cp-muted: #5b656c;
+  --cp-soft-green: #e9f4e6;
+  --cp-soft-lime: #f2f8e2;
+  --cp-radius: 10px;
+  --cp-radius-sm: 8px;
+  --cp-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --cp-shadow-lift: 0 1px 3px rgba(16, 24, 40, 0.10);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--cp-ink);
+  background: var(--cp-cream);
+  line-height: 1.55;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#cp-hs-dash *, #cp-hs-dash *::before, #cp-hs-dash *::after { box-sizing: border-box; }
+#cp-hs-dash h1, #cp-hs-dash h2, #cp-hs-dash h3, #cp-hs-dash h4, #cp-hs-dash p { margin: 0; }
+#cp-hs-dash button { font-family: inherit; cursor: pointer; }
+#cp-hs-dash textarea { font-family: inherit; }
+#cp-hs-dash svg { display: block; }
+
+#cp-hs-dash .cp-serif { font-weight: 700; letter-spacing: -0.01em; }
+
+#cp-hs-dash .cp-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+/* ---------- Header ---------- */
+#cp-hs-dash .cp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+#cp-hs-dash .cp-wordmark {
+  display: flex; align-items: center; gap: 10px;
+}
+#cp-hs-dash .cp-wordmark-name {
+  font-weight: 700; letter-spacing: -0.01em;
+  font-size: 24px;
+  color: var(--cp-forest);
+  letter-spacing: 0.2px;
+}
+#cp-hs-dash .cp-wordmark-tag {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cp-green);
+  background: var(--cp-soft-green);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+#cp-hs-dash .cp-header-right { display: flex; align-items: center; gap: 10px; }
+#cp-hs-dash .cp-reset-btn {
+  background: transparent;
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  color: var(--cp-muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+#cp-hs-dash .cp-reset-btn:hover { border-color: var(--cp-muted); color: var(--cp-ink); }
+
+/* ---------- Nav tabs ---------- */
+#cp-hs-dash .cp-nav {
+  display: flex;
+  gap: 6px;
+  background: #eceef1;
+  border: 1px solid var(--cp-border);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 26px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#cp-hs-dash .cp-nav::-webkit-scrollbar { display: none; }
+#cp-hs-dash .cp-nav-btn {
+  flex: 1;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  color: var(--cp-muted);
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 7px;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+#cp-hs-dash .cp-nav-btn:hover { color: var(--cp-forest); }
+#cp-hs-dash .cp-nav-btn.cp-active {
+  background: var(--cp-forest);
+  color: #fff;
+}
+#cp-hs-dash .cp-nav-btn:focus-visible,
+#cp-hs-dash button:focus-visible,
+#cp-hs-dash textarea:focus-visible,
+#cp-hs-dash [tabindex]:focus-visible {
+  outline: 2px solid var(--cp-green);
+  outline-offset: 2px;
+}
+
+/* ---------- Cards and layout primitives ---------- */
+#cp-hs-dash .cp-card {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  box-shadow: var(--cp-shadow);
+  padding: 22px;
+}
+#cp-hs-dash .cp-grid { display: grid; gap: 16px; }
+#cp-hs-dash .cp-grid-2 { grid-template-columns: 1fr 1fr; }
+#cp-hs-dash .cp-grid-3 { grid-template-columns: repeat(3, 1fr); }
+#cp-hs-dash .cp-section-title {
+  font-weight: 700; letter-spacing: -0.01em;
+  font-size: 22px;
+  color: var(--cp-forest);
+  margin-bottom: 4px;
+}
+#cp-hs-dash .cp-section-sub { font-size: 14px; color: var(--cp-muted); margin-bottom: 14px; }
+#cp-hs-dash .cp-eyebrow {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cp-green); margin-bottom: 6px;
+}
+
+/* ---------- Home hero ---------- */
+#cp-hs-dash .cp-hero {
+  background: var(--cp-forest);
+  border-radius: 10px;
+  color: #f4f8f2;
+  padding: 30px 28px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+#cp-hs-dash .cp-hero h1 {
+  font-weight: 700; letter-spacing: -0.01em;
+  font-size: clamp(26px, 4vw, 34px);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+#cp-hs-dash .cp-hero p { color: #cfe3cd; font-size: 15.5px; max-width: 540px; }
+#cp-hs-dash .cp-hero-top { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+
+#cp-hs-dash .cp-level-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(247, 245, 240, 0.12);
+  border: 1px solid rgba(247, 245, 240, 0.25);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-weight: 600; font-size: 14px;
+  color: #fff;
+  backdrop-filter: blur(2px);
+}
+#cp-hs-dash .cp-level-chip svg { width: 16px; height: 16px; }
+
+#cp-hs-dash .cp-xp-wrap { margin-top: 20px; max-width: 560px; }
+#cp-hs-dash .cp-xp-labels {
+  display: flex; justify-content: space-between;
+  font-size: 13px; font-weight: 600; color: #d8e8d4; margin-bottom: 7px;
+}
+#cp-hs-dash .cp-xp-track {
+  height: 12px; border-radius: 999px;
+  background: rgba(247, 245, 240, 0.18);
+  overflow: hidden;
+}
+#cp-hs-dash .cp-xp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--cp-lime);
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#cp-hs-dash .cp-hero-cta {
+  margin-top: 22px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #ffffff;
+  color: var(--cp-forest);
+  font-weight: 600; font-size: 15px;
+  border: none; border-radius: 8px;
+  padding: 12px 22px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+#cp-hs-dash .cp-hero-cta:hover { background: #eef1ee; }
+#cp-hs-dash .cp-hero-cta svg { width: 17px; height: 17px; }
+
+/* ---------- Know Yourself rings ---------- */
+#cp-hs-dash .cp-rings-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+#cp-hs-dash .cp-ring-cell { text-align: center; padding: 6px 2px; }
+#cp-hs-dash .cp-ring-svg { margin: 0 auto 8px; }
+#cp-hs-dash .cp-ring-track { stroke: #edeae0; }
+#cp-hs-dash .cp-ring-fill {
+  stroke: var(--cp-green);
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#cp-hs-dash .cp-ring-pct {
+  font-family: inherit;
+  font-weight: 700; font-size: 15px; fill: var(--cp-forest);
+}
+#cp-hs-dash .cp-ring-name { font-size: 13px; font-weight: 600; color: var(--cp-ink); }
+#cp-hs-dash .cp-ring-hint { font-size: 11.5px; color: var(--cp-muted); margin-top: 1px; }
+
+/* ---------- Nudge ---------- */
+#cp-hs-dash .cp-nudge {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--cp-soft-lime);
+  border: 1px solid #d9e8b4;
+  border-radius: var(--cp-radius);
+  padding: 15px 18px;
+}
+#cp-hs-dash .cp-nudge-icon {
+  flex: none; width: 38px; height: 38px; border-radius: 10px;
+  background: var(--cp-lime); color: var(--cp-forest);
+  display: flex; align-items: center; justify-content: center;
+}
+#cp-hs-dash .cp-nudge-icon svg { width: 20px; height: 20px; }
+#cp-hs-dash .cp-nudge-text { flex: 1; font-size: 14.5px; }
+#cp-hs-dash .cp-nudge-text strong { color: var(--cp-forest); }
+#cp-hs-dash .cp-nudge-btn {
+  flex: none;
+  background: var(--cp-forest); color: #fff;
+  border: none; border-radius: 999px;
+  font-weight: 600; font-size: 13.5px;
+  padding: 8px 16px;
+  transition: background 0.15s ease;
+}
+#cp-hs-dash .cp-nudge-btn:hover { background: #16522a; }
+
+/* ---------- Badges ---------- */
+#cp-hs-dash .cp-badge-strip { display: flex; gap: 12px; flex-wrap: wrap; }
+#cp-hs-dash .cp-badge {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  padding: 10px 14px;
+}
+#cp-hs-dash .cp-badge-medal {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--cp-green);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex: none;
+}
+#cp-hs-dash .cp-badge-medal svg { width: 20px; height: 20px; }
+#cp-hs-dash .cp-badge-name { font-weight: 700; font-size: 14px; color: var(--cp-forest); }
+#cp-hs-dash .cp-badge-desc { font-size: 12px; color: var(--cp-muted); }
+
+#cp-hs-dash .cp-trophy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+#cp-hs-dash .cp-trophy {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 20px 18px;
+  text-align: center;
+  transition: box-shadow 0.15s ease;
+}
+#cp-hs-dash .cp-trophy.cp-earned:hover { box-shadow: var(--cp-shadow-lift); }
+#cp-hs-dash .cp-trophy .cp-badge-medal { width: 56px; height: 56px; margin: 0 auto 12px; }
+#cp-hs-dash .cp-trophy .cp-badge-medal svg { width: 27px; height: 27px; }
+#cp-hs-dash .cp-trophy.cp-locked { opacity: 0.72; }
+#cp-hs-dash .cp-trophy.cp-locked .cp-badge-medal {
+  background: #dcd9cf; color: #97948b;
+}
+#cp-hs-dash .cp-trophy-name { font-weight: 700; letter-spacing: -0.01em; font-size: 18px; color: var(--cp-forest); margin-bottom: 3px; }
+#cp-hs-dash .cp-trophy.cp-locked .cp-trophy-name { color: #7c8078; }
+#cp-hs-dash .cp-trophy-cond { font-size: 12.5px; color: var(--cp-muted); }
+#cp-hs-dash .cp-trophy-earned-tag {
+  display: inline-block; margin-top: 10px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--cp-green); background: var(--cp-soft-green);
+  border-radius: 999px; padding: 3px 10px;
+}
+
+/* ---------- Explore ---------- */
+#cp-hs-dash .cp-subtabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+#cp-hs-dash .cp-subtab {
+  border: 1px solid var(--cp-border);
+  background: var(--cp-card);
+  color: var(--cp-muted);
+  border-radius: 999px;
+  font-weight: 600; font-size: 14px;
+  padding: 8px 18px;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-subtab.cp-active {
+  background: var(--cp-green); border-color: var(--cp-green); color: #fff;
+}
+#cp-hs-dash .cp-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+#cp-hs-dash .cp-chip {
+  border: 1px solid var(--cp-border);
+  background: transparent;
+  color: var(--cp-muted);
+  border-radius: 999px;
+  font-weight: 500; font-size: 12.5px;
+  padding: 5px 12px;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-chip.cp-active { background: var(--cp-forest); border-color: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-chip:hover:not(.cp-active) { border-color: var(--cp-green); color: var(--cp-green); }
+
+#cp-hs-dash .cp-item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+#cp-hs-dash .cp-item-card {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 18px;
+  text-align: left;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+#cp-hs-dash .cp-item-card:hover { box-shadow: var(--cp-shadow-lift); border-color: #c6cdd3; }
+#cp-hs-dash .cp-item-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--cp-soft-green); color: var(--cp-green);
+  display: flex; align-items: center; justify-content: center;
+}
+#cp-hs-dash .cp-item-icon svg { width: 21px; height: 21px; }
+#cp-hs-dash .cp-item-name { font-weight: 700; font-size: 15.5px; color: var(--cp-forest); }
+#cp-hs-dash .cp-item-blurb { font-size: 13px; color: var(--cp-muted); }
+#cp-hs-dash .cp-item-meta { font-size: 12px; color: var(--cp-muted); }
+#cp-hs-dash .cp-state-tags { position: absolute; top: 12px; right: 12px; display: flex; gap: 5px; }
+#cp-hs-dash .cp-state-tag {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  border-radius: 999px; padding: 2.5px 8px;
+}
+#cp-hs-dash .cp-tag-viewed { background: #f0eee6; color: #8b8878; }
+#cp-hs-dash .cp-tag-saved { background: var(--cp-soft-green); color: var(--cp-green); }
+
+/* ---------- Detail modal ---------- */
+#cp-hs-dash .cp-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(22, 33, 26, 0.45);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  z-index: 9000;
+  animation: cpFadeIn 0.18s ease;
+}
+#cp-hs-dash .cp-modal {
+  background: var(--cp-cream);
+  border-radius: 10px;
+  max-width: 640px; width: 100%;
+  max-height: 86vh; overflow-y: auto;
+  padding: 28px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.18);
+  animation: cpSlideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes cpFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cpSlideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+#cp-hs-dash .cp-modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 8px; }
+#cp-hs-dash .cp-modal-title { font-weight: 700; letter-spacing: -0.01em; font-size: 26px; color: var(--cp-forest); line-height: 1.15; }
+#cp-hs-dash .cp-modal-close {
+  flex: none; border: 1px solid var(--cp-border); background: var(--cp-card);
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-muted);
+}
+#cp-hs-dash .cp-modal-close:hover { color: var(--cp-ink); border-color: var(--cp-muted); }
+#cp-hs-dash .cp-modal-close svg { width: 15px; height: 15px; }
+#cp-hs-dash .cp-modal-sub { color: var(--cp-muted); font-size: 14px; margin-bottom: 16px; }
+#cp-hs-dash .cp-detail-block { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 14px 16px; margin-bottom: 12px; }
+#cp-hs-dash .cp-detail-block h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cp-green); margin-bottom: 5px; }
+#cp-hs-dash .cp-detail-block p, #cp-hs-dash .cp-detail-block li { font-size: 14px; color: var(--cp-ink); }
+#cp-hs-dash .cp-detail-block ul { margin: 0; padding-left: 18px; }
+#cp-hs-dash .cp-illustrative-note { font-size: 11.5px; color: var(--cp-muted); font-style: italic; margin-top: 8px; }
+
+#cp-hs-dash .cp-action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+#cp-hs-dash .cp-action-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 8px;
+  font-weight: 700; font-size: 14px;
+  padding: 10px 20px;
+  border: none;
+  transition: all 0.15s ease;
+}
+#cp-hs-dash .cp-action-btn svg { width: 16px; height: 16px; }
+#cp-hs-dash .cp-btn-save { background: var(--cp-green); color: #fff; }
+#cp-hs-dash .cp-btn-save:hover { background: #069b10; }
+#cp-hs-dash .cp-btn-save:disabled { background: var(--cp-soft-green); color: var(--cp-green); cursor: default; }
+#cp-hs-dash .cp-btn-reflect { background: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-btn-reflect:hover { background: #16522a; }
+#cp-hs-dash .cp-btn-compare { background: transparent; color: var(--cp-forest); border: 1.5px solid var(--cp-forest); }
+#cp-hs-dash .cp-btn-compare:hover { background: var(--cp-forest); color: #fff; }
+#cp-hs-dash .cp-btn-compare.cp-in-tray { background: var(--cp-soft-green); border-color: var(--cp-green); color: var(--cp-forest); }
+
+#cp-hs-dash .cp-xp-hint { font-size: 11.5px; color: var(--cp-muted); margin-top: 8px; }
+
+/* ---------- Reflection form ---------- */
+#cp-hs-dash .cp-reflect-form { margin-top: 16px; background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 16px; }
+#cp-hs-dash .cp-reflect-form label { font-weight: 600; font-size: 14px; color: var(--cp-forest); display: block; margin-bottom: 8px; }
+#cp-hs-dash .cp-reflect-form textarea {
+  width: 100%; min-height: 90px; resize: vertical;
+  border: 1px solid var(--cp-border); border-radius: 8px;
+  padding: 10px 12px; font-size: 14px; color: var(--cp-ink);
+  background: var(--cp-cream);
+}
+#cp-hs-dash .cp-reflect-form textarea:focus { outline: 2px solid var(--cp-green); border-color: var(--cp-green); }
+#cp-hs-dash .cp-reflect-saved { background: var(--cp-soft-green); border: 1px solid #cbe4c4; border-radius: var(--cp-radius-sm); padding: 13px 15px; margin-top: 16px; font-size: 14px; }
+#cp-hs-dash .cp-reflect-saved strong { color: var(--cp-green); display: block; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+
+/* ---------- Compare ---------- */
+#cp-hs-dash .cp-compare-tray {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: var(--cp-forest); color: #fff;
+  border-radius: 10px;
+  padding: 11px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.22);
+  z-index: 8500;
+  font-size: 14px; font-weight: 600;
+  max-width: calc(100vw - 30px);
+}
+#cp-hs-dash .cp-compare-tray button {
+  background: rgba(255,255,255,0.14); border: none; color: #fff;
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px; font-weight: 600;
+}
+#cp-hs-dash .cp-compare-tray button:hover { background: rgba(255,255,255,0.24); }
+#cp-hs-dash .cp-compare-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+#cp-hs-dash .cp-compare-col { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 16px; }
+#cp-hs-dash .cp-compare-col h3 { font-weight: 700; letter-spacing: -0.01em; font-size: 19px; color: var(--cp-forest); margin-bottom: 8px; }
+#cp-hs-dash .cp-compare-field { margin-bottom: 10px; }
+#cp-hs-dash .cp-compare-field h5 { margin: 0 0 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--cp-green); }
+#cp-hs-dash .cp-compare-field p { font-size: 13px; }
+
+/* ---------- Results chart ---------- */
+#cp-hs-dash .cp-chart-wrap { overflow-x: auto; }
+#cp-hs-dash .cp-bar-label { font-size: 12.5px; font-weight: 600; fill: var(--cp-ink); font-family: inherit; }
+#cp-hs-dash .cp-bar-value { font-size: 12px; font-weight: 700; fill: var(--cp-forest); font-family: inherit; }
+#cp-hs-dash .cp-bar-track { fill: #edeae0; }
+#cp-hs-dash .cp-bar-fill { fill: var(--cp-green); }
+#cp-hs-dash .cp-bar-fill.cp-bar-top { fill: var(--cp-lime); }
+
+#cp-hs-dash .cp-locked-state { text-align: center; padding: 46px 24px; }
+#cp-hs-dash .cp-locked-state .cp-item-icon { margin: 0 auto 14px; width: 52px; height: 52px; }
+#cp-hs-dash .cp-locked-state .cp-item-icon svg { width: 26px; height: 26px; }
+
+/* ---------- My Path ---------- */
+#cp-hs-dash .cp-empty {
+  border: 1.5px dashed #d5d1c4;
+  border-radius: var(--cp-radius);
+  padding: 26px 20px;
+  text-align: center;
+  color: var(--cp-muted);
+  font-size: 14px;
+}
+#cp-hs-dash .cp-empty button {
+  margin-top: 10px;
+  background: var(--cp-green); color: #fff; border: none;
+  border-radius: 999px; padding: 8px 18px; font-weight: 600; font-size: 13.5px;
+}
+#cp-hs-dash .cp-empty button:hover { background: #069b10; }
+#cp-hs-dash .cp-reflection-card { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-sm); padding: 15px 17px; }
+#cp-hs-dash .cp-reflection-card .cp-refl-item { font-weight: 700; color: var(--cp-forest); font-size: 14px; margin-bottom: 3px; }
+#cp-hs-dash .cp-reflection-card .cp-refl-text { font-size: 13.5px; color: var(--cp-ink); }
+#cp-hs-dash .cp-reflection-card .cp-refl-kind { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cp-green); }
+
+/* ---------- Toasts ---------- */
+#cp-hs-dash .cp-toast-root {
+  position: fixed; right: 18px; bottom: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 9500;
+  pointer-events: none;
+}
+#cp-hs-dash .cp-toast {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--cp-forest); color: #fff;
+  border-radius: 12px;
+  padding: 12px 17px;
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.18);
+  font-size: 14px; font-weight: 600;
+  animation: cpToastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: 320px;
+}
+#cp-hs-dash .cp-toast.cp-toast-out { animation: cpToastOut 0.25s ease forwards; }
+#cp-hs-dash .cp-toast-xp {
+  flex: none;
+  background: var(--cp-lime); color: var(--cp-forest);
+  border-radius: 999px; padding: 3px 10px;
+  font-size: 13px; font-weight: 800;
+}
+#cp-hs-dash .cp-toast.cp-toast-level { background: var(--cp-green); }
+#cp-hs-dash .cp-toast.cp-toast-badge { background: #fff; color: var(--cp-forest); border: 1px solid var(--cp-border); }
+#cp-hs-dash .cp-toast.cp-toast-badge .cp-toast-xp { background: var(--cp-soft-green); color: var(--cp-green); }
+@keyframes cpToastIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes cpToastOut { to { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- Screens ---------- */
+#cp-hs-dash .cp-screen { display: none; animation: cpFadeIn 0.2s ease; }
+#cp-hs-dash .cp-screen.cp-active { display: block; }
+#cp-hs-dash .cp-stack > * + * { margin-top: 18px; }
+
+#cp-hs-dash .cp-footer-note { margin-top: 30px; font-size: 12px; color: #98a0a6; text-align: center; }
+
+
+/* ---------- The Trail (home journey) ---------- */
+#cp-hs-dash .cp-trail-card { padding-bottom: 30px; }
+#cp-hs-dash .cp-trail {
+  position: relative;
+  height: calc(var(--stops) * 128px);
+  margin-top: 18px;
+}
+#cp-hs-dash .cp-trail-line { stroke: #b7c0ba; }
+#cp-hs-dash .cp-trail-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+#cp-hs-dash .cp-stop {
+  position: absolute;
+  top: calc(var(--row) * 128px + 64px);
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: min(72%, 640px);
+}
+#cp-hs-dash .cp-stop-left { left: calc(10% - 27px); }
+#cp-hs-dash .cp-stop-right { right: calc(10% - 27px); flex-direction: row-reverse; }
+#cp-hs-dash .cp-stop-node {
+  flex: none;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--cp-border);
+  box-shadow: var(--cp-shadow);
+  color: #fff;
+  background: var(--cp-muted);
+}
+#cp-hs-dash .cp-stop-node svg { width: 22px; height: 22px; }
+#cp-hs-dash .cp-stop-done .cp-stop-node { background: var(--cp-green); border-color: var(--cp-green); }
+#cp-hs-dash .cp-stop-next .cp-stop-node {
+  background: #fff;
+  color: var(--cp-green);
+  border-color: var(--cp-green);
+  animation: cpStopPulse 1.8s ease-in-out infinite;
+}
+#cp-hs-dash .cp-stop-todo .cp-stop-node { background: #fff; color: #98a0a6; }
+@keyframes cpStopPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 130, 8, 0.35); }
+  50% { box-shadow: 0 0 0 9px rgba(0, 130, 8, 0); }
+}
+#cp-hs-dash .cp-stop-card {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  box-shadow: var(--cp-shadow);
+  padding: 12px 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#cp-hs-dash .cp-stop-card:hover { border-color: #c6cdd3; box-shadow: var(--cp-shadow-lift); }
+#cp-hs-dash .cp-stop-next .cp-stop-card { border-color: var(--cp-green); }
+#cp-hs-dash .cp-stop-done .cp-stop-card { opacity: 0.82; }
+#cp-hs-dash .cp-stop-status {
+  display: inline-block;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--cp-muted);
+  margin-bottom: 3px;
+}
+#cp-hs-dash .cp-stop-done .cp-stop-status { color: var(--cp-green); }
+#cp-hs-dash .cp-stop-next .cp-stop-status { color: var(--cp-green); }
+#cp-hs-dash .cp-stop-title { display: block; font-weight: 700; font-size: 15px; color: var(--cp-ink); }
+#cp-hs-dash .cp-stop-desc { display: block; font-size: 13px; color: var(--cp-muted); margin-top: 2px; line-height: 1.45; }
+
+/* ---------- Who I Am ---------- */
+#cp-hs-dash .cp-whoiam-hero {
+  background: var(--cp-forest);
+  border-radius: 10px;
+  color: #f4f8f2;
+  padding: 30px 28px;
+  margin-bottom: 18px;
+}
+#cp-hs-dash .cp-arch-name {
+  font-weight: 700; letter-spacing: -0.01em;
+  font-size: clamp(28px, 4.5vw, 38px);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+#cp-hs-dash .cp-arch-narrative { color: #cfe3cd; font-size: 15.5px; max-width: 680px; line-height: 1.6; }
+#cp-hs-dash .cp-trait-card {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  padding: 16px;
+}
+#cp-hs-dash .cp-trait-rank {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cp-green); margin-bottom: 4px;
+}
+#cp-hs-dash .cp-trait-name { font-weight: 700; font-size: 16.5px; color: var(--cp-forest); margin-bottom: 6px; }
+#cp-hs-dash .cp-trait-means { font-size: 13.5px; color: var(--cp-ink); line-height: 1.5; margin-bottom: 10px; }
+#cp-hs-dash .cp-trait-row { margin-top: 8px; }
+#cp-hs-dash .cp-trait-row p { font-size: 12.5px; color: var(--cp-muted); line-height: 1.45; margin-top: 2px; }
+#cp-hs-dash .cp-trait-tag {
+  display: inline-block;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--cp-green);
+  background: var(--cp-soft-green);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+#cp-hs-dash .cp-trait-tag-watch { color: #8a6a1f; background: #f7f0dc; }
+#cp-hs-dash .cp-style-list { margin: 0; padding-left: 20px; }
+#cp-hs-dash .cp-style-list li { font-size: 14.5px; color: var(--cp-ink); margin-bottom: 8px; line-height: 1.5; }
+
+/* ---------- Achievements level bar ---------- */
+#cp-hs-dash .cp-level-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+#cp-hs-dash .cp-level-chip-light {
+  background: var(--cp-soft-green);
+  border: 1px solid #cbe4c4;
+  color: var(--cp-forest);
+  backdrop-filter: none;
+}
+#cp-hs-dash .cp-level-chip-light svg { color: var(--cp-green); }
+#cp-hs-dash .cp-xp-track-light { background: #e7eaed; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  #cp-hs-dash .cp-grid-2, #cp-hs-dash .cp-grid-3 { grid-template-columns: 1fr; }
+  #cp-hs-dash .cp-rings-row { grid-template-columns: repeat(2, 1fr); }
+  #cp-hs-dash .cp-trail { height: auto; padding-left: 4px; }
+  #cp-hs-dash .cp-trail::before {
+    content: "";
+    position: absolute; top: 10px; bottom: 10px; left: 26px;
+    border-left: 2px dashed #b7c0ba;
+  }
+  #cp-hs-dash .cp-trail-svg { display: none; }
+  #cp-hs-dash .cp-stop {
+    position: relative; top: auto; left: auto; right: auto;
+    transform: none;
+    width: 100%;
+    flex-direction: row;
+    margin-bottom: 14px;
+  }
+  #cp-hs-dash .cp-stop-node { position: relative; z-index: 1; }
+  #cp-hs-dash .cp-nav-btn { padding: 9px 13px; font-size: 13.5px; }
+  #cp-hs-dash .cp-hero { padding: 24px 20px; }
+  #cp-hs-dash .cp-nudge { flex-wrap: wrap; }
+  #cp-hs-dash .cp-compare-cols { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cp-hs-dash .cp-stop-next .cp-stop-node { animation: none; }
+  #cp-hs-dash *, #cp-hs-dash *::before, #cp-hs-dash *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}
+</style>
+</head>
+<body>
+<div id="cp-hs-dash">
+  <div class="cp-shell">
+    <header class="cp-header">
+      <div class="cp-wordmark">
+        <span class="cp-wordmark-name">CloverPath</span>
+        <span class="cp-wordmark-tag">Student Homebase</span>
+      </div>
+      <div class="cp-header-right">
+        <button class="cp-reset-btn" id="cp-reset-demo" type="button">Reset demo</button>
+      </div>
+    </header>
+
+    <nav class="cp-nav" role="tablist" aria-label="Dashboard sections">
+      <button class="cp-nav-btn cp-active" data-screen="home" type="button">Home</button>
+      <button class="cp-nav-btn" data-screen="whoiam" type="button">Who I Am</button>
+      <button class="cp-nav-btn" data-screen="majors" type="button">My Majors</button>
+      <button class="cp-nav-btn" data-screen="schools" type="button">My Schools</button>
+      <button class="cp-nav-btn" data-screen="achievements" type="button">Achievements</button>
+    </nav>
+
+    <main>
+      <section class="cp-screen cp-active" id="cp-screen-home"></section>
+      <section class="cp-screen" id="cp-screen-whoiam"></section>
+      <section class="cp-screen" id="cp-screen-majors"></section>
+      <section class="cp-screen" id="cp-screen-schools"></section>
+      <section class="cp-screen" id="cp-screen-achievements"></section>
+    </main>
+
+    <p class="cp-footer-note">Career and college details shown here are illustrative examples for exploration, not official statistics.</p>
+  </div>
+
+  <div class="cp-toast-root" id="cp-toast-root" aria-live="polite"></div>
+  <div id="cp-modal-root"></div>
+  <div id="cp-tray-root"></div>
+</div>
+
+
+<script>
+(function () {
+  'use strict';
+  // Re-entry guard: safe if the host page injects this file twice.
+  if (window.__cpHsDashInitialized) return;
+  window.__cpHsDashInitialized = true;
+
+  /* ============================================================
+     CONFIG
+     ============================================================ */
+
+  // Cooper: set this to the live aptitude module URL before deploy.
+  var APTITUDE_URL = '#';
+
+  var STORAGE_KEY = 'cp_hs_dashboard_v1';
+
+  // Data seam. When LIVE is true, getSessionData() should fetch the
+  // real hs_sessions row instead of returning the mock below.
+  var LIVE = false;
+
+  var MOCK_STUDENT = { firstName: 'Jordan' };
+
+  /* ============================================================
+     MOCK SESSION (matches the hs_sessions schema exactly)
+     Premise: the aptitude assessment was completed during
+     onboarding and surfaced a strongly engineering-leaning profile,
+     so the dashboard boots pre-filled with those results.
+     ============================================================ */
+
+  var MOCK_SESSION = {
+    id: '7f3c9a1e-52d4-4b8a-9c1f-2e6d8b4a0c73',
+    student_id: null,
+    student_email: 'jordan.avery@student.example.org',
+    organization_id: null,
+    completed: true,
+    created_at: '2026-05-14T15:02:11.000Z',
+    updated_at: '2026-06-21T19:47:36.000Z',
+    completed_at: '2026-05-14T15:41:52.000Z',
+    p1_answers: {
+      fix_hands: 3,
+      lead_sell: 0,
+      build_make: 3,
+      teach_coach: 1,
+      help_support: 1,
+      analyze_solve: 3,
+      compete_train: 1,
+      design_better: 2,
+      create_express: 0,
+      organize_track: 1,
+      explore_research: 2,
+      outdoors_animals: 1,
+      perform_entertain: 0
+    },
+    p2_answers: {
+      build_make: {
+        style: 'hands_on',
+        reflect: 'I lose track of time when I am putting something together. Last month I rebuilt an old go kart frame with my uncle and it was the best weekend I have had in a while.',
+        activities: ['woodshop', 'robotics_club', 'home_projects'],
+        frustration: 'When there is no clear plan and parts are missing.',
+        motivations: ['seeing_finished_result', 'solving_physical_problems']
+      },
+      fix_hands: {
+        style: 'trial_and_error',
+        reflect: 'I am the person my family asks when something breaks. I like figuring out why a thing stopped working more than I like reading about it.',
+        activities: ['fixing_bikes', 'small_engine_repair'],
+        frustration: 'Stripped screws and manuals that skip steps.',
+        motivations: ['being_useful', 'independence']
+      },
+      analyze_solve: {
+        style: 'step_by_step',
+        reflect: 'Math class is fine but I like puzzles more when they connect to something real, like figuring out why the 3D printer keeps jamming.',
+        activities: ['chess', 'strategy_games', 'debugging_prints'],
+        frustration: 'Problems where the answer does not matter to anyone.',
+        motivations: ['curiosity', 'getting_to_the_bottom_of_things']
+      }
+    },
+    surfaced_clusters: ['eng_tech', 'skilled', 'science'],
+    clusters_viewed: ['eng_tech', 'skilled', 'science'],
+    majors_viewed: [
+      'Mechanical Engineering',
+      'Computer Science',
+      'Electrical Engineering',
+      'Robotics and Mechatronics Technology'
+    ],
+    majors_saved: ['Mechanical Engineering', 'Robotics and Mechatronics Technology'],
+    clusters_saved: ['eng_tech'],
+    schools_saved: ['Georgia Institute of Technology'],
+    comparisons_made: [
+      { type: 'major', a: 'Mechanical Engineering', b: 'Electrical Engineering' }
+    ],
+    p1_completed: true
+  };
+
+  function getSessionData() {
+    if (LIVE) {
+      // Real integration seam. When LIVE is true, replace the return
+      // below with a Supabase fetch of the student's hs_sessions row:
+      //
+      //   const { data, error } = await supabase
+      //     .from('hs_sessions')
+      //     .select('*')
+      //     .eq('student_email', currentStudentEmail)
+      //     .order('updated_at', { ascending: false })
+      //     .limit(1)
+      //     .single();
+      //   return data;
+      //
+      // Everything downstream reads only through this function, so no
+      // other code changes are needed for the swap.
+    }
+    return MOCK_SESSION;
+  }
+
+  /* ============================================================
+     CONTENT CATALOG (illustrative taxonomy; ids stay stable)
+     ============================================================ */
+
+  var ICONS = {
+    gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+    palette: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    flask: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.34 19.03A2 2 0 0 0 6.07 22h11.86a2 2 0 0 0 1.73-2.97L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>',
+    mountain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 8 5-5 5 15H2L8 3z"/></svg>',
+    compass: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+    bookmark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
+    scale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.9 5.8L20 9.7l-5 4 1.4 6.3L12 16.6 7.6 20l1.4-6.3-5-4 6.1-1.9L12 2z"/></svg>',
+    grad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>',
+    map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+  };
+
+  var CLUSTERS = [
+    { id: 'eng_tech', name: 'Engineering and Technology', blurb: 'Design, build, and improve the machines, structures, and software the world runs on.', icon: 'gear' },
+    { id: 'skilled', name: 'Skilled Trades', blurb: 'Hands-on careers that keep everything running, from wiring and welding to climate systems.', icon: 'wrench' },
+    { id: 'health', name: 'Health and Medicine', blurb: 'Care for people directly, from bedside nursing to sports medicine and beyond.', icon: 'heart' },
+    { id: 'business', name: 'Business and Entrepreneurship', blurb: 'Lead teams, sell ideas, manage money, or start something of your own.', icon: 'briefcase' },
+    { id: 'creative', name: 'Arts and Creative Media', blurb: 'Tell stories and shape how things look, sound, and feel.', icon: 'palette' },
+    { id: 'public_service', name: 'Law and Public Service', blurb: 'Protect communities and keep systems fair, from courtrooms to first response.', icon: 'shield' },
+    { id: 'science', name: 'Science and Research', blurb: 'Ask hard questions about how the world works and chase the answers with evidence.', icon: 'flask' },
+    { id: 'outdoors', name: 'Outdoors and Environment', blurb: 'Work with land, water, and wildlife instead of behind a desk all day.', icon: 'mountain' }
+  ];
+
+  var MAJORS = [
+    { name: 'Mechanical Engineering', clusterId: 'eng_tech', blurb: 'How machines move, from engines and robots to prosthetics and rockets.', sampleCourses: ['Statics and Dynamics', 'Thermodynamics', 'Machine Design', 'Materials Science'], relatedPaths: ['Mechanical Engineer', 'Robotics Technician'] },
+    { name: 'Electrical Engineering', clusterId: 'eng_tech', blurb: 'Circuits, power systems, and the electronics inside everything.', sampleCourses: ['Circuit Analysis', 'Digital Logic', 'Signals and Systems', 'Embedded Systems'], relatedPaths: ['Electrical Engineer', 'Robotics Technician'] },
+    { name: 'Civil Engineering', clusterId: 'eng_tech', blurb: 'Bridges, roads, water systems, and the structures everyone depends on.', sampleCourses: ['Structural Analysis', 'Soil Mechanics', 'Hydraulics', 'Surveying'], relatedPaths: ['Civil Engineer', 'Construction Site Supervisor'] },
+    { name: 'Aerospace Engineering', clusterId: 'eng_tech', blurb: 'Aircraft, rockets, and drones, and the physics that keeps them in the air.', sampleCourses: ['Aerodynamics', 'Propulsion', 'Flight Mechanics', 'Aerospace Structures'], relatedPaths: ['Aerospace Engineer', 'Mechanical Engineer'] },
+    { name: 'Robotics and Mechatronics Technology', clusterId: 'eng_tech', blurb: 'Where mechanical, electrical, and software come together in machines that move.', sampleCourses: ['Sensors and Actuators', 'PLC Programming', 'Robot Kinematics', 'Control Systems'], relatedPaths: ['Robotics Technician', 'CNC Machinist'] },
+    { name: 'Computer Science', clusterId: 'eng_tech', blurb: 'Programming, algorithms, and the logic behind every app and game you use.', sampleCourses: ['Intro to Programming', 'Data Structures', 'Computer Systems', 'Algorithms'], relatedPaths: ['Software Developer'] },
+    { name: 'Construction Management', clusterId: 'skilled', blurb: 'Run job sites and turn blueprints into finished buildings, on time and on budget.', sampleCourses: ['Blueprint Reading', 'Project Scheduling', 'Construction Safety', 'Cost Estimating'], relatedPaths: ['Construction Site Supervisor'] },
+    { name: 'Welding and Fabrication Technology', clusterId: 'skilled', blurb: 'Join and shape metal for everything from pipelines to custom cars.', sampleCourses: ['MIG and TIG Welding', 'Metallurgy Basics', 'Fabrication Layout', 'Welding Codes'], relatedPaths: ['Welder and Fabricator'] },
+    { name: 'HVAC and Energy Systems', clusterId: 'skilled', blurb: 'Heating, cooling, and the energy systems buildings depend on.', sampleCourses: ['Refrigeration Fundamentals', 'Electrical for HVAC', 'System Diagnostics', 'Energy Efficiency'], relatedPaths: ['HVAC Technician'] },
+    { name: 'Nursing', clusterId: 'health', blurb: 'Frontline patient care in hospitals, clinics, schools, and homes.', sampleCourses: ['Anatomy and Physiology', 'Pharmacology', 'Patient Assessment', 'Clinical Rotations'], relatedPaths: ['Registered Nurse'] },
+    { name: 'Criminal Justice', clusterId: 'public_service', blurb: 'How laws, courts, and policing actually work, and how to make them work better.', sampleCourses: ['Intro to Criminal Justice', 'Criminology', 'Constitutional Law', 'Forensics Basics'], relatedPaths: ['Detective and Investigator'] },
+    { name: 'Business Administration', clusterId: 'business', blurb: 'The fundamentals of running any organization: money, people, and strategy.', sampleCourses: ['Accounting Principles', 'Marketing 101', 'Management', 'Business Statistics'], relatedPaths: ['Sales Manager'] },
+    { name: 'Graphic Design', clusterId: 'creative', blurb: 'Visual communication, from logos and posters to apps and packaging.', sampleCourses: ['Typography', 'Design Software Studio', 'Branding', 'Portfolio Development'], relatedPaths: ['Graphic Designer'] },
+    { name: 'Environmental Science', clusterId: 'science', blurb: 'Study ecosystems, climate, and pollution with real field and lab work.', sampleCourses: ['Ecology', 'Environmental Chemistry', 'GIS Mapping', 'Field Methods'], relatedPaths: ['Environmental Scientist', 'Park Ranger'] },
+    { name: 'Wildlife and Fisheries Management', clusterId: 'outdoors', blurb: 'Manage animal populations and habitats across public lands and waters.', sampleCourses: ['Wildlife Biology', 'Habitat Management', 'Conservation Policy', 'Field Techniques'], relatedPaths: ['Park Ranger', 'Environmental Scientist'] }
+  ];
+
+  var PATHS = [
+    { name: 'Mechanical Engineer', clusterId: 'eng_tech', dayInLife: 'Mornings modeling parts in CAD, afternoons testing prototypes and troubleshooting with the shop team.', payRange: '$70k to $110k', outlook: 'Steady demand, strongest in manufacturing and energy' },
+    { name: 'Electrical Engineer', clusterId: 'eng_tech', dayInLife: 'Designing and testing circuits and power systems, then chasing down why the prototype does not behave like the simulation.', payRange: '$72k to $115k', outlook: 'Strong demand across energy, chips, and automation' },
+    { name: 'Civil Engineer', clusterId: 'eng_tech', dayInLife: 'Splitting time between design software, permit reviews, and muddy site visits to see the real thing get built.', payRange: '$65k to $100k', outlook: 'Steady public infrastructure demand' },
+    { name: 'Aerospace Engineer', clusterId: 'eng_tech', dayInLife: 'Running simulations and structural tests, then reviewing results with a team where every detail matters.', payRange: '$80k to $125k', outlook: 'Concentrated near aerospace hubs, strong for specialists' },
+    { name: 'Software Developer', clusterId: 'eng_tech', dayInLife: 'Writing and reviewing code, debugging, and planning features with a small team, often with flexible hours.', payRange: '$75k to $130k', outlook: 'Strong long-term growth' },
+    { name: 'Robotics Technician', clusterId: 'eng_tech', dayInLife: 'Installing, calibrating, and repairing automated systems on factory floors.', payRange: '$50k to $75k', outlook: 'Growing fast as automation spreads' },
+    { name: 'Electrician', clusterId: 'skilled', dayInLife: 'On-site wiring, troubleshooting panels, and reading blueprints, with a mix of new builds and service calls.', payRange: '$50k to $85k', outlook: 'High demand, licensed trade with apprenticeship path' },
+    { name: 'CNC Machinist', clusterId: 'skilled', dayInLife: 'Programming and running precision machines, checking parts against specs a thousandth of an inch at a time.', payRange: '$45k to $70k', outlook: 'Steady, with premium pay for multi-axis skills' },
+    { name: 'HVAC Technician', clusterId: 'skilled', dayInLife: 'Diagnosing and repairing heating and cooling systems, a different site almost every day.', payRange: '$45k to $75k', outlook: 'Very high demand in growing regions' },
+    { name: 'Welder and Fabricator', clusterId: 'skilled', dayInLife: 'Reading specs, cutting and joining metal, and inspecting your own welds in a shop or on site.', payRange: '$42k to $70k', outlook: 'Steady, with premium pay for specialty welds' },
+    { name: 'Construction Site Supervisor', clusterId: 'skilled', dayInLife: 'Coordinating crews and deliveries, solving the day\u2019s surprise problem, and keeping the schedule honest.', payRange: '$60k to $95k', outlook: 'Strong wherever building is happening' },
+    { name: 'Registered Nurse', clusterId: 'health', dayInLife: 'Twelve-hour shifts of patient care, charting, and coordinating with doctors and families.', payRange: '$65k to $95k', outlook: 'Very strong demand nationwide' },
+    { name: 'Environmental Scientist', clusterId: 'science', dayInLife: 'Field sampling some weeks, lab analysis and reports the others.', payRange: '$55k to $85k', outlook: 'Growing with environmental regulation and cleanup work' },
+    { name: 'Graphic Designer', clusterId: 'creative', dayInLife: 'Client briefs in the morning, focused design time in the afternoon, revisions in between.', payRange: '$45k to $75k', outlook: 'Steady, portfolio matters more than degree' }
+  ];
+
+  var COLLEGES = [
+    { name: 'Georgia Institute of Technology', offersMajors: ['Mechanical Engineering', 'Electrical Engineering', 'Civil Engineering', 'Aerospace Engineering', 'Computer Science'], location: 'Atlanta, GA', type: 'Public university' },
+    { name: 'Austin Community College District', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems', 'Construction Management', 'Robotics and Mechatronics Technology', 'Computer Science'], location: 'Austin, TX', type: 'Community college' },
+    { name: 'Arizona State University Campus Immersion', offersMajors: ['Mechanical Engineering', 'Computer Science', 'Electrical Engineering', 'Aerospace Engineering', 'Business Administration', 'Graphic Design'], location: 'Tempe, AZ', type: 'Public university' },
+    { name: 'Purdue University', offersMajors: ['Mechanical Engineering', 'Aerospace Engineering', 'Electrical Engineering', 'Civil Engineering', 'Computer Science'], location: 'West Lafayette, IN', type: 'Public university' },
+    { name: 'Texas State Technical College', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems', 'Robotics and Mechatronics Technology', 'Electrical Engineering'], location: 'Waco, TX', type: 'Trade and technical' },
+    { name: 'Colorado School of Mines', offersMajors: ['Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Environmental Science'], location: 'Golden, CO', type: 'Public university' },
+    { name: 'University of Tennessee, Knoxville', offersMajors: ['Mechanical Engineering', 'Civil Engineering', 'Nursing', 'Environmental Science', 'Business Administration'], location: 'Knoxville, TN', type: 'Public university' },
+    { name: 'Southwest Tennessee Community College', offersMajors: ['Nursing', 'HVAC and Energy Systems', 'Criminal Justice', 'Business Administration'], location: 'Memphis, TN', type: 'Community college' },
+    { name: 'Auburn University', offersMajors: ['Mechanical Engineering', 'Aerospace Engineering', 'Wildlife and Fisheries Management', 'Business Administration', 'Nursing'], location: 'Auburn, AL', type: 'Public university' },
+    { name: 'Portland Community College', offersMajors: ['Welding and Fabrication Technology', 'Computer Science', 'Graphic Design', 'Criminal Justice'], location: 'Portland, OR', type: 'Community college' },
+    { name: 'University of Colorado Boulder', offersMajors: ['Environmental Science', 'Mechanical Engineering', 'Aerospace Engineering', 'Computer Science'], location: 'Boulder, CO', type: 'Public university' },
+    { name: 'Lincoln College of Technology', offersMajors: ['Welding and Fabrication Technology', 'HVAC and Energy Systems', 'CNC Machining'], location: 'Nashville, TN', type: 'Trade and technical' },
+    { name: 'North Carolina State University', offersMajors: ['Mechanical Engineering', 'Civil Engineering', 'Environmental Science', 'Computer Science'], location: 'Raleigh, NC', type: 'Public university' },
+    { name: 'Ivy Tech Community College', offersMajors: ['HVAC and Energy Systems', 'Welding and Fabrication Technology', 'Robotics and Mechatronics Technology', 'Nursing'], location: 'Indianapolis, IN', type: 'Community college' },
+    { name: 'Montana State University', offersMajors: ['Wildlife and Fisheries Management', 'Environmental Science', 'Mechanical Engineering', 'Civil Engineering'], location: 'Bozeman, MT', type: 'Public university' },
+    { name: 'Pellissippi State Community College', offersMajors: ['Computer Science', 'Business Administration', 'Graphic Design'], location: 'Knoxville, TN', type: 'Community college' }
+  ];
+
+  var INTEREST_LABELS = {
+    fix_hands: 'Fixing with your hands',
+    lead_sell: 'Leading and selling',
+    build_make: 'Building and making',
+    teach_coach: 'Teaching and coaching',
+    help_support: 'Helping and supporting',
+    analyze_solve: 'Analyzing and solving',
+    compete_train: 'Competing and training',
+    design_better: 'Designing improvements',
+    create_express: 'Creating and expressing',
+    organize_track: 'Organizing and tracking',
+    explore_research: 'Exploring and researching',
+    outdoors_animals: 'Outdoors and animals',
+    perform_entertain: 'Performing and entertaining'
+  };
+
+  // Maps Part 2 interest reflections to the field they inform, so
+  // reflection credit can flow to surfaced fields.
+  var INTEREST_TO_CLUSTER = {
+    fix_hands: 'skilled',
+    build_make: 'eng_tech',
+    analyze_solve: 'science',
+    explore_research: 'science',
+    outdoors_animals: 'outdoors',
+    design_better: 'eng_tech',
+    help_support: 'health',
+    teach_coach: 'public_service',
+    lead_sell: 'business',
+    create_express: 'creative',
+    perform_entertain: 'creative',
+    organize_track: 'business',
+    compete_train: 'health'
+  };
+
+  /* ============================================================
+     WHO I AM CONTENT (trait science copy, driven by p1 scores)
+     ============================================================ */
+
+  var TRAITS = {
+    fix_hands: { noun: 'Troubleshooter', adj: 'Hands-On', means: 'You want to know why things break and how to bring them back. Diagnosis is the fun part for you, not the chore.', thrive: 'Workshops, labs, job sites, and any role where something physical is broken and waiting for you.', watch: 'Desk-only classes can feel pointless to you until someone connects them to a real machine.' },
+    build_make: { noun: 'Builder', adj: 'Maker-Minded', means: 'You think with your hands. An idea is not finished for you until it physically exists and works.', thrive: 'Project-based classes, maker spaces, robotics teams, and jobs that end with something you can point at.', watch: 'You may undervalue planning. The best builders sketch before they cut.' },
+    analyze_solve: { noun: 'Problem Solver', adj: 'Analytical', means: 'You break big messy problems into small solvable ones, and you do not let go until the pieces fit.', thrive: 'Engineering, debugging, diagnostics, strategy, anywhere the answer is hiding in the details.', watch: 'Problems with no clear answer can frustrate you. Some of the best ones are like that.' },
+    design_better: { noun: 'Improver', adj: 'Design-Minded', means: 'You notice when things are built badly and you cannot help imagining the better version.', thrive: 'Design reviews, prototyping, process improvement, and any team that rewards better over first.', watch: 'Perfect is the enemy of shipped. Version two exists for a reason.' },
+    explore_research: { noun: 'Investigator', adj: 'Curious', means: 'You ask one more question than everyone else and actually go find the answer.', thrive: 'Labs, field work, research projects, and roles where not knowing yet is the starting point.', watch: 'Rabbit holes are fun. Deadlines are real. You will need both.' },
+    outdoors_animals: { noun: 'Naturalist', adj: 'Outdoor', means: 'You do your best thinking outside and you would rather work with the physical world than a spreadsheet about it.', thrive: 'Field work, conservation, agriculture, and trades that keep you moving and outdoors.', watch: 'Many outdoor careers still run on reports and data. The desk finds everyone eventually.' },
+    help_support: { noun: 'Helper', adj: 'People-First', means: 'You notice when people need something and you move first. Being useful to someone is what makes a day feel good.', thrive: 'Healthcare, counseling, service roles, and any team where people lean on each other.', watch: 'Helpers burn out when they never ask for help themselves.' },
+    teach_coach: { noun: 'Mentor', adj: 'Coaching', means: 'You get real satisfaction from watching someone go from confused to capable because of you.', thrive: 'Teaching, training, coaching, and senior roles on any team where new people need bringing along.', watch: 'Not everyone learns your way. Great coaches adapt the lesson to the learner.' },
+    lead_sell: { noun: 'Leader', adj: 'Persuasive', means: 'You are comfortable making the call and getting people to move in the same direction.', thrive: 'Team lead roles, entrepreneurship, sales, and situations where someone has to decide.', watch: 'Leading works better when you have listened first.' },
+    create_express: { noun: 'Creator', adj: 'Creative', means: 'You have ideas that need to get out, and you care how things look, sound, and feel.', thrive: 'Studios, media work, design roles, and anywhere original counts more than standard.', watch: 'Creative fields reward finishing. A hundred started projects beat nothing, but one finished beats a hundred.' },
+    organize_track: { noun: 'Planner', adj: 'Organized', means: 'You keep the details straight when everyone else has lost the plot, and things run because of it.', thrive: 'Operations, project coordination, logistics, and any team that is smart but chaotic.', watch: 'Plans change. The best planners build in room for surprises.' },
+    compete_train: { noun: 'Competitor', adj: 'Competitive', means: 'You improve fastest with a scoreboard. Training toward a target is how you stay locked in.', thrive: 'Goal-driven programs, athletics, sales, certifications, and anywhere progress gets measured.', watch: 'Not everything worth doing keeps score.' },
+    perform_entertain: { noun: 'Performer', adj: 'Expressive', means: 'You come alive with an audience and you can hold a room.', thrive: 'Presenting, performing, teaching, and any role where communication is the job.', watch: 'The practice hours nobody sees are what make the performance look easy.' }
+  };
+
+  var STYLE_LABELS = {
+    hands_on: 'You learn best by doing, not by watching. You need to touch the thing.',
+    trial_and_error: 'You learn by experimenting, taking things apart, and trying again until it works.',
+    step_by_step: 'You like a clear sequence. Give you the steps and you will beat anyone to the finish.'
+  };
+
+  /* ============================================================
+     GAMIFICATION CONFIG
+     ============================================================ */
+
+  var XP = {
+    assessment: 100,
+    p1: 25,
+    clusterView: 15,
+    majorView: 10,
+    pathView: 10,
+    schoolView: 10,
+    whoiamRead: 15,
+    save: 20,
+    comparison: 30,
+    reflection: 40
+  };
+
+  var LEVELS = [
+    { name: 'Explorer', min: 0 },
+    { name: 'Pathfinder', min: 100 },
+    { name: 'Navigator', min: 300 },
+    { name: 'Trailblazer', min: 600 }
+  ];
+
+  var BADGES = [
+    { id: 'self_starter', name: 'Self-Starter', icon: 'spark', cond: 'Complete Part 1 of the assessment', test: function (w) { return w.p1_completed; } },
+    { id: 'know_thyself', name: 'Know Thyself', icon: 'compass', cond: 'Complete the full aptitude assessment', test: function (w) { return w.completed; } },
+    { id: 'explorer', name: 'Explorer', icon: 'map', cond: 'Open your first career field', test: function (w) { return w.clusters_viewed.length >= 1; } },
+    { id: 'deep_diver', name: 'Deep Diver', icon: 'flask', cond: 'View 5 or more majors', test: function (w) { return w.majors_viewed.length >= 5; } },
+    { id: 'curator', name: 'Curator', icon: 'bookmark', cond: 'Save 5 or more majors, fields, or schools', test: function (w) { return (w.majors_saved.length + w.clusters_saved.length + w.schools_saved.length) >= 5; } },
+    { id: 'cross_examiner', name: 'Cross-Examiner', icon: 'scale', cond: 'Make your first side by side comparison', test: function (w) { return w.comparisons_made.length >= 1; } },
+    { id: 'reflector', name: 'Reflector', icon: 'pencil', cond: 'Write a reflection for every one of your matched fields', test: function (w) { return reflectedClusterCount(w) >= w.surfaced_clusters.length && w.surfaced_clusters.length > 0; } },
+    { id: 'well_rounded', name: 'Well-Rounded', icon: 'star', cond: 'Explore 3 or more different career fields', test: function (w) { return w.clusters_viewed.length >= 3; } }
+  ];
+
+  /* ============================================================
+     PERSISTED STATE (deltas + award ledger only)
+     ============================================================ */
+
+  function blankState() {
+    return {
+      ledger: [],            // XP keys already awarded (idempotency)
+      earnedBadges: [],      // badge ids already announced
+      views: { majors: [], clusters: [], paths: [], schools: [] },
+      saves: { majors: [], clusters: [], schools: [] },
+      reflections: {},       // key -> { type, id, text, ts }
+      comparisons: [],       // { type, a, b, ts }
+      flags: {}              // one-time milestones, e.g. whoiam_read
+    };
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      var base = blankState();
+      for (var k in base) if (parsed[k] !== undefined) base[k] = parsed[k];
+      // Normalize sub-keys so older stored shapes stay compatible.
+      var vb = blankState().views;
+      for (var vk in vb) if (!base.views[vk]) base.views[vk] = [];
+      if (!base.flags) base.flags = {};
+      return base;
+    } catch (e) { return null; }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
+  }
+
+  var isFirstBoot = false;
+  var state = loadState();
+  if (!state) { state = blankState(); isFirstBoot = true; }
+
+  /* ============================================================
+     WORKING COPY (mock session merged with local deltas)
+     ============================================================ */
+
+  function uniq(arr) {
+    var out = [], seen = {};
+    for (var i = 0; i < arr.length; i++) {
+      var v = arr[i];
+      if (!seen[v]) { seen[v] = true; out.push(v); }
+    }
+    return out;
+  }
+
+  function getWorking() {
+    var s = getSessionData();
+    return {
+      completed: s.completed,
+      p1_completed: s.p1_completed,
+      p1_answers: s.p1_answers,
+      p2_answers: s.p2_answers,
+      surfaced_clusters: s.surfaced_clusters.slice(),
+      clusters_viewed: uniq(s.clusters_viewed.concat(state.views.clusters)),
+      majors_viewed: uniq(s.majors_viewed.concat(state.views.majors)),
+      paths_viewed: uniq(state.views.paths),
+      schools_viewed: uniq(state.views.schools),
+      majors_saved: uniq(s.majors_saved.concat(state.saves.majors)),
+      clusters_saved: uniq(s.clusters_saved.concat(state.saves.clusters)),
+      schools_saved: uniq(s.schools_saved.concat(state.saves.schools)),
+      comparisons_made: s.comparisons_made.concat(state.comparisons)
+    };
+  }
+
+  /* ============================================================
+     XP ENGINE (pure function of the working copy; ledger makes
+     awards idempotent across reloads and re-renders)
+     ============================================================ */
+
+  function cmpKey(c) {
+    var pair = [String(c.a), String(c.b)].sort();
+    return 'cmp:' + c.type + ':' + pair[0] + '|' + pair[1];
+  }
+
+  function collectXpItems(w) {
+    var items = [];
+    if (w.completed) items.push({ key: 'assessment_complete', xp: XP.assessment });
+    if (w.p1_completed) items.push({ key: 'p1_complete', xp: XP.p1 });
+    if (state.flags.whoiam_read) items.push({ key: 'whoiam_read', xp: XP.whoiamRead });
+    var i;
+    for (i = 0; i < w.clusters_viewed.length; i++) items.push({ key: 'cv:' + w.clusters_viewed[i], xp: XP.clusterView });
+    for (i = 0; i < w.majors_viewed.length; i++) items.push({ key: 'mv:' + w.majors_viewed[i], xp: XP.majorView });
+    for (i = 0; i < w.paths_viewed.length; i++) items.push({ key: 'pv:' + w.paths_viewed[i], xp: XP.pathView });
+    for (i = 0; i < w.schools_viewed.length; i++) items.push({ key: 'sv:' + w.schools_viewed[i], xp: XP.schoolView });
+    for (i = 0; i < w.majors_saved.length; i++) items.push({ key: 'save:major:' + w.majors_saved[i], xp: XP.save });
+    for (i = 0; i < w.clusters_saved.length; i++) items.push({ key: 'save:cluster:' + w.clusters_saved[i], xp: XP.save });
+    for (i = 0; i < w.schools_saved.length; i++) items.push({ key: 'save:school:' + w.schools_saved[i], xp: XP.save });
+    var seenCmp = {};
+    for (i = 0; i < w.comparisons_made.length; i++) {
+      var ck = cmpKey(w.comparisons_made[i]);
+      if (!seenCmp[ck]) { seenCmp[ck] = true; items.push({ key: ck, xp: XP.comparison }); }
+    }
+    for (var interest in w.p2_answers) {
+      if (w.p2_answers[interest] && w.p2_answers[interest].reflect) items.push({ key: 'refl:p2:' + interest, xp: XP.reflection });
+    }
+    for (var rk in state.reflections) items.push({ key: 'refl:native:' + rk, xp: XP.reflection });
+    // Dedupe on key so nothing can ever double count.
+    var out = [], seen = {};
+    for (i = 0; i < items.length; i++) {
+      if (!seen[items[i].key]) { seen[items[i].key] = true; out.push(items[i]); }
+    }
+    return out;
+  }
+
+  function totalXp(items) {
+    var t = 0;
+    for (var i = 0; i < items.length; i++) t += items[i].xp;
+    return t;
+  }
+
+  function levelFor(xp) {
+    var lvl = LEVELS[0], next = null;
+    for (var i = 0; i < LEVELS.length; i++) {
+      if (xp >= LEVELS[i].min) { lvl = LEVELS[i]; next = LEVELS[i + 1] || null; }
+    }
+    return { level: lvl, next: next };
+  }
+
+  function reflectedClusterCount(w) {
+    var reflected = {};
+    for (var interest in w.p2_answers) {
+      if (w.p2_answers[interest] && w.p2_answers[interest].reflect) {
+        var cid = INTEREST_TO_CLUSTER[interest];
+        if (cid) reflected[cid] = true;
+      }
+    }
+    for (var key in state.reflections) {
+      var r = state.reflections[key];
+      if (r.type === 'cluster') reflected[r.id] = true;
+      if (r.type === 'major') {
+        var m = findMajor(r.id);
+        if (m) reflected[m.clusterId] = true;
+      }
+      if (r.type === 'path') {
+        var p = findPath(r.id);
+        if (p) reflected[p.clusterId] = true;
+      }
+    }
+    var count = 0;
+    for (var i = 0; i < w.surfaced_clusters.length; i++) {
+      if (reflected[w.surfaced_clusters[i]]) count++;
+    }
+    return count;
+  }
+
+  function computeRings(w) {
+    var nonzero = 0;
+    for (var k in w.p1_answers) if (w.p1_answers[k] > 0) nonzero++;
+    var interests = w.p1_completed ? 100 : Math.round((nonzero / 13) * 100);
+    var reflection = w.surfaced_clusters.length ? Math.min(100, Math.round((reflectedClusterCount(w) / w.surfaced_clusters.length) * 100)) : 0;
+    var clustPart = Math.min(1, uniq(w.clusters_viewed).length / 3);
+    var majPart = Math.min(1, w.majors_viewed.length / 8);
+    var exploration = Math.round(((clustPart + majPart) / 2) * 100);
+    var saves = w.majors_saved.length + w.clusters_saved.length + w.schools_saved.length;
+    var savePart = Math.min(1, saves / 6);
+    var cmpPart = Math.min(1, w.comparisons_made.length / 2);
+    var commitment = Math.round((savePart * 0.6 + cmpPart * 0.4) * 100);
+    return [
+      { name: 'Interests', pct: interests, hint: 'From your assessment' },
+      { name: 'Reflection', pct: reflection, hint: 'Fields you have written about' },
+      { name: 'Exploration', pct: exploration, hint: 'Fields and majors opened' },
+      { name: 'Commitment', pct: commitment, hint: 'Saves and comparisons' }
+    ];
+  }
+
+  /* ============================================================
+     RECOMPUTE + AWARD LOOP
+     ============================================================ */
+
+  var lastXpTotal = 0;
+
+  function recompute(actionLabel, opts) {
+    opts = opts || {};
+    var w = getWorking();
+    var items = collectXpItems(w);
+    var xp = totalXp(items);
+
+    var ledgerSet = {};
+    for (var i = 0; i < state.ledger.length; i++) ledgerSet[state.ledger[i]] = true;
+    var newKeys = [], newXp = 0;
+    for (i = 0; i < items.length; i++) {
+      if (!ledgerSet[items[i].key]) {
+        newKeys.push(items[i].key);
+        newXp += items[i].xp;
+        state.ledger.push(items[i].key);
+      }
+    }
+
+    var prevLevel = levelFor(lastXpTotal).level.name;
+    var lvlInfo = levelFor(xp);
+
+    var earnedSet = {};
+    for (i = 0; i < state.earnedBadges.length; i++) earnedSet[state.earnedBadges[i]] = true;
+    var newBadges = [];
+    for (i = 0; i < BADGES.length; i++) {
+      if (!earnedSet[BADGES[i].id] && BADGES[i].test(w)) {
+        state.earnedBadges.push(BADGES[i].id);
+        newBadges.push(BADGES[i]);
+      }
+    }
+
+    saveState();
+
+    var announce = !isFirstBoot && !opts.silent;
+    if (announce && newXp > 0) {
+      toast('xp', '+' + newXp + ' XP', actionLabel || 'Nice work.');
+    }
+    if (announce && lastXpTotal > 0 && lvlInfo.level.name !== prevLevel && xp > lastXpTotal) {
+      toast('level', lvlInfo.level.name, 'Level up. You are now a ' + lvlInfo.level.name + '.');
+    }
+    if (announce) {
+      for (i = 0; i < newBadges.length; i++) {
+        toast('badge', 'Badge', 'Badge earned: ' + newBadges[i].name + '.');
+      }
+    }
+
+    lastXpTotal = xp;
+    return { working: w, xp: xp, levelInfo: lvlInfo, rings: computeRings(w) };
+  }
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function el(id) { return document.getElementById(id); }
+  function findCluster(id) { for (var i = 0; i < CLUSTERS.length; i++) if (CLUSTERS[i].id === id) return CLUSTERS[i]; return null; }
+  function findMajor(name) { for (var i = 0; i < MAJORS.length; i++) if (MAJORS[i].name === name) return MAJORS[i]; return null; }
+  function findPath(name) { for (var i = 0; i < PATHS.length; i++) if (PATHS[i].name === name) return PATHS[i]; return null; }
+  function findCollege(name) { for (var i = 0; i < COLLEGES.length; i++) if (COLLEGES[i].name === name) return COLLEGES[i]; return null; }
+  function icon(name) { return ICONS[name] || ICONS.compass; }
+
+  function toast(kind, chip, msg) {
+    var root = el('cp-toast-root');
+    if (!root) return;
+    var t = document.createElement('div');
+    t.className = 'cp-toast' + (kind === 'level' ? ' cp-toast-level' : kind === 'badge' ? ' cp-toast-badge' : '');
+    t.innerHTML = '<span class="cp-toast-xp">' + escapeHtml(chip) + '</span><span>' + escapeHtml(msg) + '</span>';
+    root.appendChild(t);
+    setTimeout(function () {
+      t.classList.add('cp-toast-out');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    }, 3400);
+  }
+
+  function ringSvg(pct, size) {
+    size = size || 92;
+    var r = 36, c = 2 * Math.PI * r;
+    var offset = c * (1 - Math.max(0, Math.min(100, pct)) / 100);
+    return '<svg class="cp-ring-svg" width="' + size + '" height="' + size + '" viewBox="0 0 92 92" role="img" aria-label="' + pct + ' percent">' +
+      '<circle class="cp-ring-track" cx="46" cy="46" r="' + r + '" fill="none" stroke-width="9"/>' +
+      '<circle class="cp-ring-fill" cx="46" cy="46" r="' + r + '" fill="none" stroke-width="9" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"/>' +
+      '<text class="cp-ring-pct" x="46" y="51" text-anchor="middle">' + pct + '%</text>' +
+    '</svg>';
+  }
+
+  function bind(selector, fn) {
+    var nodes = document.querySelectorAll('#cp-hs-dash ' + selector);
+    for (var i = 0; i < nodes.length; i++) {
+      (function (node) { node.addEventListener('click', function () { fn(node); }); })(nodes[i]);
+    }
+  }
+
+  /* ============================================================
+     NAVIGATION
+     ============================================================ */
+
+  var currentScreen = 'home';
+  var majorsPrefs = { cluster: 'all' };
+  var schoolsPrefs = { type: 'all' };
+
+  function showScreen(name, prefs) {
+    currentScreen = name;
+    if (prefs && prefs.cluster !== undefined) majorsPrefs.cluster = prefs.cluster;
+    if (prefs && prefs.type !== undefined) schoolsPrefs.type = prefs.type;
+    var btns = document.querySelectorAll('#cp-hs-dash .cp-nav-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('cp-active', btns[i].getAttribute('data-screen') === name);
+    }
+    var screens = document.querySelectorAll('#cp-hs-dash .cp-screen');
+    for (i = 0; i < screens.length; i++) {
+      screens[i].classList.toggle('cp-active', screens[i].id === 'cp-screen-' + name);
+    }
+    renderAll();
+    var shell = document.querySelector('#cp-hs-dash .cp-shell');
+    if (shell && shell.scrollIntoView && !isFirstBoot) { try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { /* older browsers */ } }
+  }
+
+  /* ============================================================
+     THE TRAIL (home screen journey)
+     ============================================================ */
+
+  function majorComparisonCount(w) {
+    var n = 0, seen = {};
+    for (var i = 0; i < w.comparisons_made.length; i++) {
+      var c = w.comparisons_made[i];
+      if (c.type !== 'major') continue;
+      var k = cmpKey(c);
+      if (!seen[k]) { seen[k] = true; n++; }
+    }
+    return n;
+  }
+
+  function trailStops(w, xp) {
+    var nativeReflections = 0;
+    for (var k in state.reflections) nativeReflections++;
+    return [
+      { id: 'assessment', icon: 'compass', title: 'Take the aptitude assessment', desc: 'Done during onboarding. Everything below is built from your results.', done: !!w.completed, go: 'whoiam', progress: null },
+      { id: 'whoiam', icon: 'spark', title: 'Meet yourself', desc: 'Read your Who I Am profile and see what your results actually say about you.', done: !!state.flags.whoiam_read, go: 'whoiam', progress: null },
+      { id: 'majors3', icon: 'grad', title: 'Explore 3 majors', desc: 'Open three majors and see which ones pull you in.', done: w.majors_viewed.length >= 3, go: 'majors', progress: Math.min(3, w.majors_viewed.length) + ' of 3' },
+      { id: 'savemajors', icon: 'bookmark', title: 'Save 2 majors', desc: 'Bookmark the two that feel most like you.', done: w.majors_saved.length >= 2, go: 'majors', progress: Math.min(2, w.majors_saved.length) + ' of 2' },
+      { id: 'compare', icon: 'scale', title: 'Compare two majors', desc: 'Put two majors side by side and see what you actually care about.', done: majorComparisonCount(w) >= 1, go: 'majors', progress: null },
+      { id: 'reflect', icon: 'pencil', title: 'Write a reflection', desc: 'Open a major and write a few honest sentences of your own.', done: nativeReflections >= 1, go: 'majors', progress: null },
+      { id: 'careers', icon: 'briefcase', title: 'Check out 2 careers', desc: 'See what a real day looks like in two careers your majors lead to.', done: w.paths_viewed.length >= 2, go: 'majors', progress: Math.min(2, w.paths_viewed.length) + ' of 2' },
+      { id: 'schools3', icon: 'map', title: 'Open 3 schools', desc: 'Look at three schools that teach what you want to learn.', done: w.schools_viewed.length >= 3, go: 'schools', progress: Math.min(3, w.schools_viewed.length) + ' of 3' },
+      { id: 'saveschools', icon: 'star', title: 'Save 3 schools', desc: 'Build a shortlist of schools worth a real look.', done: w.schools_saved.length >= 3, go: 'schools', progress: Math.min(3, w.schools_saved.length) + ' of 3' },
+      { id: 'trailblazer', icon: 'trophy', title: 'Reach Trailblazer', desc: 'Hit 600 XP and earn the top rank on your path.', done: xp >= 600, go: 'achievements', progress: Math.min(600, xp) + ' of 600 XP' }
+    ];
+  }
+
+  function trailSvg(stops) {
+    // Winding dirt path. ViewBox is 100 wide by (stops * 20) tall and
+    // stretches to the container; non-scaling strokes keep the path
+    // width constant at any size.
+    var unit = 20;
+    var pts = [];
+    for (var i = 0; i < stops.length; i++) {
+      pts.push({ x: (i % 2 === 0) ? 10 : 90, y: i * unit + unit / 2 });
+    }
+    var d = 'M ' + pts[0].x + ' ' + pts[0].y;
+    for (i = 1; i < pts.length; i++) {
+      var a = pts[i - 1], b = pts[i];
+      d += ' C ' + a.x + ' ' + (a.y + unit * 0.6) + ', ' + b.x + ' ' + (b.y - unit * 0.6) + ', ' + b.x + ' ' + b.y;
+    }
+    var h = stops.length * unit;
+    return '<svg class="cp-trail-svg" viewBox="0 0 100 ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path class="cp-trail-line" d="' + d + '" fill="none" stroke-width="2" stroke-dasharray="5 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+    '</svg>';
+  }
+
+  function renderHome(data) {
+    var w = data.working, li = data.levelInfo;
+    var span = li.next ? (li.next.min - li.level.min) : 1;
+    var into = li.next ? (data.xp - li.level.min) : span;
+    var pct = Math.max(0, Math.min(100, Math.round((into / span) * 100)));
+    var xpLabel = li.next
+      ? (data.xp + ' XP, ' + (li.next.min - data.xp) + ' to ' + li.next.name)
+      : (data.xp + ' XP, top level reached');
+
+    var stops = trailStops(w, data.xp);
+    var doneCount = 0;
+    for (var i = 0; i < stops.length; i++) if (stops[i].done) doneCount++;
+    var nextIdx = -1;
+    for (i = 0; i < stops.length; i++) { if (!stops[i].done) { nextIdx = i; break; } }
+
+    var heroHtml =
+      '<div class="cp-hero">' +
+        '<div class="cp-hero-top">' +
+          '<div><h1>Your path, ' + escapeHtml(MOCK_STUDENT.firstName) + '</h1>' +
+          '<p>' + doneCount + ' of ' + stops.length + ' stops complete. Every stop you clear sharpens the picture of where you are headed.</p></div>' +
+          '<span class="cp-level-chip">' + icon('trophy') + escapeHtml(li.level.name) + '</span>' +
+        '</div>' +
+        '<div class="cp-xp-wrap">' +
+          '<div class="cp-xp-labels"><span>Level progress</span><span>' + escapeHtml(xpLabel) + '</span></div>' +
+          '<div class="cp-xp-track"><div class="cp-xp-fill" id="cp-xp-fill"></div></div>' +
+        '</div>' +
+        (!w.completed ? '<a class="cp-hero-cta" href="' + APTITUDE_URL + '" target="_blank" rel="noopener">Take the aptitude assessment' + icon('arrow') + '</a>' : '') +
+      '</div>';
+
+    var stopsHtml = '';
+    for (i = 0; i < stops.length; i++) {
+      var s = stops[i];
+      var status = s.done ? 'done' : (i === nextIdx ? 'next' : 'todo');
+      var side = (i % 2 === 0) ? 'left' : 'right';
+      var badge = s.done ? 'Complete' : (i === nextIdx ? 'Up next' : (s.progress ? s.progress : 'To do'));
+      stopsHtml +=
+        '<div class="cp-stop cp-stop-' + side + ' cp-stop-' + status + '" style="--row:' + i + '">' +
+          '<span class="cp-stop-node" aria-hidden="true">' + (s.done ? icon('check') : icon(s.icon)) + '</span>' +
+          '<button class="cp-stop-card" type="button" data-go="' + s.go + '" aria-label="' + escapeHtml(s.title + '. ' + badge) + '">' +
+            '<span class="cp-stop-status">' + escapeHtml(badge) + '</span>' +
+            '<span class="cp-stop-title">' + escapeHtml(s.title) + '</span>' +
+            '<span class="cp-stop-desc">' + escapeHtml(s.desc) + '</span>' +
+          '</button>' +
+        '</div>';
+    }
+
+    el('cp-screen-home').innerHTML =
+      heroHtml +
+      '<div class="cp-card cp-trail-card">' +
+        '<div class="cp-eyebrow">The trail</div>' +
+        '<h2 class="cp-section-title">Stops on your path</h2>' +
+        '<p class="cp-section-sub">Work down the trail at your own pace. Tap any stop to jump to it.</p>' +
+        '<div class="cp-trail" style="--stops:' + stops.length + '">' +
+          trailSvg(stops) +
+          stopsHtml +
+        '</div>' +
+      '</div>';
+
+    bind('#cp-screen-home [data-go]', function (btn) {
+      showScreen(btn.getAttribute('data-go'));
+    });
+
+    var fill = el('cp-xp-fill');
+    if (fill) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { fill.style.width = pct + '%'; });
+      });
+    }
+  }
+
+  /* ============================================================
+     WHO I AM
+     ============================================================ */
+
+  function topInterests(w, n) {
+    var entries = [];
+    for (var k in w.p1_answers) entries.push({ key: k, score: w.p1_answers[k] });
+    entries.sort(function (a, b) { return b.score - a.score; });
+    return entries.slice(0, n || 3);
+  }
+
+  function archetypeName(w) {
+    var top = topInterests(w, 2);
+    if (top.length < 2 || top[0].score === 0) return 'The Explorer';
+    var t1 = TRAITS[top[0].key], t2 = TRAITS[top[1].key];
+    if (!t1 || !t2) return 'The Explorer';
+    return 'The ' + t2.adj + ' ' + t1.noun;
+  }
+
+  function interestChart(w) {
+    var entries = [];
+    for (var k in w.p1_answers) entries.push({ key: k, score: w.p1_answers[k] });
+    entries.sort(function (a, b) { return b.score - a.score; });
+    var rowH = 34, labelW = 195, chartW = 620, barMax = chartW - labelW - 50;
+    var svg = '<svg viewBox="0 0 ' + chartW + ' ' + (entries.length * rowH + 6) + '" width="100%" role="img" aria-label="Interest profile chart">';
+    for (var i = 0; i < entries.length; i++) {
+      var e = entries[i];
+      var y = i * rowH + 4;
+      var barW = Math.max(4, (e.score / 3) * barMax);
+      var top = i < 3 && e.score > 0;
+      svg += '<text class="cp-bar-label" x="' + (labelW - 10) + '" y="' + (y + 17) + '" text-anchor="end">' + escapeHtml(INTEREST_LABELS[e.key] || e.key) + '</text>';
+      svg += '<rect class="cp-bar-track" x="' + labelW + '" y="' + (y + 6) + '" width="' + barMax + '" height="14" rx="7"/>';
+      svg += '<rect class="cp-bar-fill' + (top ? ' cp-bar-top' : '') + '" x="' + labelW + '" y="' + (y + 6) + '" width="' + barW + '" height="14" rx="7"/>';
+      svg += '<text class="cp-bar-value" x="' + (labelW + barW + 8) + '" y="' + (y + 17) + '">' + e.score + '</text>';
+    }
+    svg += '</svg>';
+    return svg;
+  }
+
+  function renderWhoIAm(data) {
+    var w = data.working;
+    var root = el('cp-screen-whoiam');
+
+    if (!w.p1_completed) {
+      root.innerHTML =
+        '<div class="cp-card cp-locked-state">' +
+          '<div class="cp-item-icon">' + icon('lock') + '</div>' +
+          '<h2 class="cp-section-title">Your profile is waiting</h2>' +
+          '<p class="cp-section-sub">Take the aptitude assessment to unlock who you are.</p>' +
+          '<a class="cp-hero-cta" href="' + APTITUDE_URL + '" target="_blank" rel="noopener" style="margin-top:6px;background:var(--cp-green);color:#fff">Take the aptitude assessment' + icon('arrow') + '</a>' +
+        '</div>';
+      return;
+    }
+
+    var top3 = topInterests(w, 3);
+    var arch = archetypeName(w);
+
+    // Narrative built from the top traits.
+    var t1 = TRAITS[top3[0].key], t2 = TRAITS[top3[1] ? top3[1].key : ''], t3 = TRAITS[top3[2] ? top3[2].key : ''];
+    var narrative = 'Your results point somewhere specific. ' + (t1 ? t1.means : '') +
+      (t2 ? ' ' + t2.means : '') +
+      ' Put together, you are someone who figures out how things work and makes them work better. That combination shows up everywhere in engineering and the skilled trades, which is exactly where your matched fields landed.';
+
+    var traitCards = '';
+    for (var i = 0; i < top3.length; i++) {
+      var t = TRAITS[top3[i].key];
+      if (!t || top3[i].score === 0) continue;
+      traitCards +=
+        '<div class="cp-trait-card">' +
+          '<div class="cp-trait-rank">Driver ' + (i + 1) + '</div>' +
+          '<div class="cp-trait-name">' + escapeHtml(INTEREST_LABELS[top3[i].key]) + '</div>' +
+          '<p class="cp-trait-means">' + escapeHtml(t.means) + '</p>' +
+          '<div class="cp-trait-row"><span class="cp-trait-tag">Where you thrive</span><p>' + escapeHtml(t.thrive) + '</p></div>' +
+          '<div class="cp-trait-row"><span class="cp-trait-tag cp-trait-tag-watch">Watch for</span><p>' + escapeHtml(t.watch) + '</p></div>' +
+        '</div>';
+    }
+
+    // How you work, from Part 2 answers.
+    var styleHtml = '';
+    for (var interest in w.p2_answers) {
+      var ans = w.p2_answers[interest];
+      if (!ans) continue;
+      if (ans.style && STYLE_LABELS[ans.style] && styleHtml.indexOf(STYLE_LABELS[ans.style]) === -1) {
+        styleHtml += '<li>' + escapeHtml(STYLE_LABELS[ans.style]) + '</li>';
+      }
+      if (ans.frustration) {
+        styleHtml += '<li>What drains you: ' + escapeHtml(ans.frustration.charAt(0).toLowerCase() + ans.frustration.slice(1)) + '</li>';
+      }
+    }
+
+    var matchHtml = '';
+    for (i = 0; i < w.surfaced_clusters.length; i++) {
+      var c = findCluster(w.surfaced_clusters[i]);
+      if (!c) continue;
+      var saved = w.clusters_saved.indexOf(c.id) !== -1;
+      matchHtml += '<div class="cp-item-card" style="cursor:default">' +
+        (saved ? '<div class="cp-state-tags"><span class="cp-state-tag cp-tag-saved">Saved</span></div>' : '') +
+        '<div class="cp-item-icon">' + icon(c.icon) + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(c.name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(c.blurb) + '</div>' +
+        '<div class="cp-action-row" style="margin-top:6px">' +
+          '<button class="cp-action-btn cp-btn-compare" data-explore-cluster="' + escapeHtml(c.id) + '" type="button" style="padding:7px 15px;font-size:13px">See these majors</button>' +
+          (saved ? '' : '<button class="cp-action-btn cp-btn-save" data-save-cluster="' + escapeHtml(c.id) + '" type="button" style="padding:7px 15px;font-size:13px">' + icon('bookmark') + 'Save</button>') +
+        '</div></div>';
+    }
+
+    var reflHtml = '';
+    for (interest in w.p2_answers) {
+      var pa = w.p2_answers[interest];
+      if (!pa || !pa.reflect) continue;
+      reflHtml += '<div class="cp-reflection-card"><span class="cp-refl-kind">From your assessment</span>' +
+        '<div class="cp-refl-item">' + escapeHtml(INTEREST_LABELS[interest] || interest) + '</div>' +
+        '<div class="cp-refl-text">' + escapeHtml(pa.reflect) + '</div></div>';
+    }
+    var reflKeys = Object.keys(state.reflections).sort(function (a, b) { return state.reflections[a].ts - state.reflections[b].ts; });
+    for (i = 0; i < reflKeys.length; i++) {
+      var r = state.reflections[reflKeys[i]];
+      var label = r.type === 'cluster' ? (findCluster(r.id) ? findCluster(r.id).name : r.id) : r.id;
+      reflHtml += '<div class="cp-reflection-card"><span class="cp-refl-kind">Written here</span>' +
+        '<div class="cp-refl-item">' + escapeHtml(label) + '</div>' +
+        '<div class="cp-refl-text">' + escapeHtml(r.text) + '</div></div>';
+    }
+
+    root.innerHTML =
+      '<div class="cp-whoiam-hero">' +
+        '<div class="cp-eyebrow" style="color:#a8d5a0">Who I Am</div>' +
+        '<h1 class="cp-arch-name">' + escapeHtml(arch) + '</h1>' +
+        '<p class="cp-arch-narrative">' + escapeHtml(narrative) + '</p>' +
+      '</div>' +
+      '<div class="cp-stack">' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Your top drivers</div>' +
+          '<h2 class="cp-section-title">What actually motivates you</h2>' +
+          '<p class="cp-section-sub">Your three strongest signals from the assessment, and what each one means in the real world.</p>' +
+          '<div class="cp-grid cp-grid-3 cp-trait-grid">' + traitCards + '</div>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">How you work</div>' +
+          '<h2 class="cp-section-title">Your operating style</h2>' +
+          '<p class="cp-section-sub">Pulled from your own answers, not a stereotype.</p>' +
+          '<ul class="cp-style-list">' + styleHtml + '</ul>' +
+        '</div>' +
+        '<div class="cp-card cp-chart-wrap">' +
+          '<div class="cp-eyebrow">The full picture</div>' +
+          '<h2 class="cp-section-title">Your interest profile</h2>' +
+          '<p class="cp-section-sub">All thirteen signals, scored 0 to 3. Your top three are highlighted.</p>' +
+          interestChart(w) +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Matched fields</div>' +
+          '<h2 class="cp-section-title">Where your profile points</h2>' +
+          '<p class="cp-section-sub">These fields matched your answers. Your majors and schools pages are built around them.</p>' +
+          '<div class="cp-item-grid">' + matchHtml + '</div>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">In your own words</div>' +
+          '<h2 class="cp-section-title">Your reflections</h2>' +
+          '<p class="cp-section-sub">What you have written about yourself so far.</p>' +
+          '<div class="cp-grid cp-grid-2">' + reflHtml + '</div>' +
+        '</div>' +
+        '<p class="cp-footer-note" style="margin-top:0">Results shift as you grow. <a href="' + APTITUDE_URL + '" target="_blank" rel="noopener" style="color:var(--cp-green)">Retake the assessment</a> any time.</p>' +
+      '</div>';
+
+    bind('#cp-screen-whoiam [data-explore-cluster]', function (btn) {
+      showScreen('majors', { cluster: btn.getAttribute('data-explore-cluster') });
+    });
+    bind('#cp-screen-whoiam [data-save-cluster]', function (btn) {
+      var cid = btn.getAttribute('data-save-cluster');
+      if (state.saves.clusters.indexOf(cid) === -1) state.saves.clusters.push(cid);
+      saveState();
+      recompute('Field saved.');
+      renderAll();
+    });
+
+    // First read of the profile clears a trail stop and earns XP.
+    if (!state.flags.whoiam_read && !isFirstBoot) {
+      state.flags.whoiam_read = true;
+      saveState();
+      recompute('You read your profile. That is the whole point of this place.');
+    }
+  }
+
+  /* ============================================================
+     MY MAJORS + MY SCHOOLS
+     ============================================================ */
+
+  function stateTags(w, type, id) {
+    var viewed = false, saved = false;
+    if (type === 'major') { viewed = w.majors_viewed.indexOf(id) !== -1; saved = w.majors_saved.indexOf(id) !== -1; }
+    if (type === 'cluster') { viewed = w.clusters_viewed.indexOf(id) !== -1; saved = w.clusters_saved.indexOf(id) !== -1; }
+    if (type === 'school') { viewed = w.schools_viewed.indexOf(id) !== -1; saved = w.schools_saved.indexOf(id) !== -1; }
+    if (type === 'path') { viewed = w.paths_viewed.indexOf(id) !== -1; }
+    var html = '';
+    if (saved) html += '<span class="cp-state-tag cp-tag-saved">Saved</span>';
+    else if (viewed) html += '<span class="cp-state-tag cp-tag-viewed">Viewed</span>';
+    return html ? '<div class="cp-state-tags">' + html + '</div>' : '';
+  }
+
+  function majorCard(w, m) {
+    var c = findCluster(m.clusterId);
+    return '<button class="cp-item-card" data-open="major" data-id="' + escapeHtml(m.name) + '" type="button">' +
+      stateTags(w, 'major', m.name) +
+      '<div class="cp-item-icon">' + icon(c ? c.icon : 'grad') + '</div>' +
+      '<div class="cp-item-name">' + escapeHtml(m.name) + '</div>' +
+      '<div class="cp-item-blurb">' + escapeHtml(m.blurb) + '</div>' +
+      '<div class="cp-item-meta">' + escapeHtml(c ? c.name : '') + '</div></button>';
+  }
+
+  function pathCard(w, p) {
+    var pc = findCluster(p.clusterId);
+    var matched = w.surfaced_clusters.indexOf(p.clusterId) !== -1;
+    return '<button class="cp-item-card" data-open="path" data-id="' + escapeHtml(p.name) + '" type="button">' +
+      stateTags(w, 'path', p.name) +
+      '<div class="cp-item-icon">' + icon(pc ? pc.icon : 'compass') + '</div>' +
+      '<div class="cp-item-name">' + escapeHtml(p.name) + '</div>' +
+      '<div class="cp-item-blurb">' + escapeHtml(p.dayInLife) + '</div>' +
+      '<div class="cp-item-meta">' + escapeHtml(p.payRange) + ' \u00b7 ' + escapeHtml(pc ? pc.name : '') + (matched ? ' (match)' : '') + '</div></button>';
+  }
+
+  function comparisonsStrip(w, cmpType) {
+    var html = '', seen = {};
+    for (var i = 0; i < w.comparisons_made.length; i++) {
+      var cm = w.comparisons_made[i];
+      if (cm.type !== cmpType) continue;
+      var key = cmpKey(cm);
+      if (seen[key]) continue;
+      seen[key] = true;
+      html += '<button class="cp-item-card" data-recompare=\'' + escapeHtml(JSON.stringify({ type: cm.type, a: cm.a, b: cm.b })) + '\' type="button">' +
+        '<div class="cp-item-icon">' + icon('scale') + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(cm.a) + ' vs ' + escapeHtml(cm.b) + '</div>' +
+        '<div class="cp-item-meta">Tap to reopen</div></button>';
+    }
+    if (!html) return '';
+    return '<div class="cp-card"><div class="cp-eyebrow">Your comparisons</div>' +
+      '<h3 class="cp-section-title" style="font-size:19px">Side by sides you have run</h3>' +
+      '<div class="cp-item-grid" style="margin-top:12px">' + html + '</div></div>';
+  }
+
+  function renderMajors(data) {
+    var w = data.working;
+
+    var filterHtml = '<div class="cp-filter-row"><span class="cp-item-meta">Field:</span>' +
+      '<button class="cp-chip' + (majorsPrefs.cluster === 'all' ? ' cp-active' : '') + '" data-mfilter="all" type="button">All</button>';
+    for (var i = 0; i < CLUSTERS.length; i++) {
+      var isMatch = w.surfaced_clusters.indexOf(CLUSTERS[i].id) !== -1;
+      filterHtml += '<button class="cp-chip' + (majorsPrefs.cluster === CLUSTERS[i].id ? ' cp-active' : '') + '" data-mfilter="' + CLUSTERS[i].id + '" type="button">' + escapeHtml(CLUSTERS[i].name) + (isMatch ? ' (match)' : '') + '</button>';
+    }
+    filterHtml += '</div>';
+
+    var matchedHtml = '', otherHtml = '';
+    for (i = 0; i < MAJORS.length; i++) {
+      var m = MAJORS[i];
+      if (majorsPrefs.cluster !== 'all' && m.clusterId !== majorsPrefs.cluster) continue;
+      if (w.surfaced_clusters.indexOf(m.clusterId) !== -1) matchedHtml += majorCard(w, m);
+      else otherHtml += majorCard(w, m);
+    }
+
+    var sectionsHtml = '';
+    if (matchedHtml) {
+      sectionsHtml += '<div class="cp-card"><div class="cp-eyebrow">Matched to your results</div>' +
+        '<h3 class="cp-section-title" style="font-size:19px">Majors built for your profile</h3>' +
+        '<p class="cp-section-sub">These come from the fields your assessment surfaced. Open one, save it, reflect on it, or compare two.</p>' +
+        '<div class="cp-item-grid">' + matchedHtml + '</div></div>';
+    }
+    if (otherHtml) {
+      sectionsHtml += '<div class="cp-card"><div class="cp-eyebrow">Beyond your matches</div>' +
+        '<h3 class="cp-section-title" style="font-size:19px">Worth a look anyway</h3>' +
+        '<p class="cp-section-sub">Strong profiles still get surprised. These sit outside your matched fields.</p>' +
+        '<div class="cp-item-grid">' + otherHtml + '</div></div>';
+    }
+    if (!sectionsHtml) sectionsHtml = '<div class="cp-card"><div class="cp-empty">Nothing in this field. Try another filter.</div></div>';
+
+    // Careers the matched majors lead to, matched fields first.
+    var pathsSorted = PATHS.slice().sort(function (a, b) {
+      var am = w.surfaced_clusters.indexOf(a.clusterId) !== -1 ? 0 : 1;
+      var bm = w.surfaced_clusters.indexOf(b.clusterId) !== -1 ? 0 : 1;
+      return am - bm;
+    });
+    var pathsHtml = '';
+    for (i = 0; i < pathsSorted.length; i++) {
+      if (majorsPrefs.cluster !== 'all' && pathsSorted[i].clusterId !== majorsPrefs.cluster) continue;
+      pathsHtml += pathCard(w, pathsSorted[i]);
+    }
+    var careersSection = pathsHtml
+      ? '<div class="cp-card"><div class="cp-eyebrow">Where these lead</div>' +
+        '<h3 class="cp-section-title" style="font-size:19px">Careers to check out</h3>' +
+        '<p class="cp-section-sub">A real day, real pay, and the outlook for careers your majors feed into. Careers from your matched fields are tagged (match).</p>' +
+        '<div class="cp-item-grid">' + pathsHtml + '</div></div>'
+      : '';
+
+    el('cp-screen-majors').innerHTML =
+      '<div class="cp-eyebrow">My Majors</div>' +
+      '<h2 class="cp-section-title">Majors matched to who you are</h2>' +
+      '<p class="cp-section-sub">Built from your assessment. Saving, reflecting, and comparing all earn XP and clear trail stops.</p>' +
+      filterHtml +
+      '<div class="cp-stack">' + sectionsHtml + careersSection + comparisonsStrip(w, 'major') + '</div>';
+
+    bind('#cp-screen-majors [data-mfilter]', function (btn) {
+      majorsPrefs.cluster = btn.getAttribute('data-mfilter');
+      renderMajors(recompute(null, { silent: true }));
+    });
+    bind('#cp-screen-majors [data-open]', function (btn) {
+      openDetail(btn.getAttribute('data-open'), btn.getAttribute('data-id'));
+    });
+    bind('#cp-screen-majors [data-recompare]', function (btn) {
+      try {
+        var cm = JSON.parse(btn.getAttribute('data-recompare'));
+        showComparison(cm.type === 'school' ? 'school' : 'major', cm.a, cm.b);
+      } catch (e) { /* malformed */ }
+    });
+  }
+
+  function renderSchools(data) {
+    var w = data.working;
+    var types = [
+      { id: 'all', label: 'All' },
+      { id: 'Public university', label: 'Universities' },
+      { id: 'Community college', label: 'Community colleges' },
+      { id: 'Trade and technical', label: 'Trade and technical' }
+    ];
+    var filterHtml = '<div class="cp-filter-row"><span class="cp-item-meta">Type:</span>';
+    for (var i = 0; i < types.length; i++) {
+      filterHtml += '<button class="cp-chip' + (schoolsPrefs.type === types[i].id ? ' cp-active' : '') + '" data-sfilter="' + escapeHtml(types[i].id) + '" type="button">' + escapeHtml(types[i].label) + '</button>';
+    }
+    filterHtml += '</div>';
+
+    function savedMajorCount(col) {
+      var n = 0;
+      for (var j = 0; j < col.offersMajors.length; j++) {
+        if (w.majors_saved.indexOf(col.offersMajors[j]) !== -1) n++;
+      }
+      return n;
+    }
+
+    var sorted = COLLEGES.slice().sort(function (a, b) { return savedMajorCount(b) - savedMajorCount(a); });
+    var cardsHtml = '';
+    for (i = 0; i < sorted.length; i++) {
+      var col = sorted[i];
+      if (schoolsPrefs.type !== 'all' && col.type !== schoolsPrefs.type) continue;
+      var n = savedMajorCount(col);
+      var meta = n > 0
+        ? 'Offers ' + n + ' of your saved majors'
+        : 'Offers ' + col.offersMajors.length + ' explorable majors';
+      cardsHtml += '<button class="cp-item-card" data-open="school" data-id="' + escapeHtml(col.name) + '" type="button">' +
+        stateTags(w, 'school', col.name) +
+        '<div class="cp-item-icon">' + icon('grad') + '</div>' +
+        '<div class="cp-item-name">' + escapeHtml(col.name) + '</div>' +
+        '<div class="cp-item-blurb">' + escapeHtml(col.type) + ' in ' + escapeHtml(col.location) + '</div>' +
+        '<div class="cp-item-meta">' + escapeHtml(meta) + '</div></button>';
+    }
+    if (!cardsHtml) cardsHtml = '<div class="cp-empty">No schools of this type here yet.</div>';
+
+    el('cp-screen-schools').innerHTML =
+      '<div class="cp-eyebrow">My Schools</div>' +
+      '<h2 class="cp-section-title">Schools that teach what you want to learn</h2>' +
+      '<p class="cp-section-sub">Sorted so schools offering your saved majors come first. Open a few, then save a shortlist of three.</p>' +
+      filterHtml +
+      '<div class="cp-item-grid">' + cardsHtml + '</div>' +
+      '<div class="cp-stack" style="margin-top:16px">' + comparisonsStrip(w, 'school') + '</div>';
+
+    bind('#cp-screen-schools [data-sfilter]', function (btn) {
+      schoolsPrefs.type = btn.getAttribute('data-sfilter');
+      renderSchools(recompute(null, { silent: true }));
+    });
+    bind('#cp-screen-schools [data-open]', function (btn) {
+      openDetail(btn.getAttribute('data-open'), btn.getAttribute('data-id'));
+    });
+    bind('#cp-screen-schools [data-recompare]', function (btn) {
+      try {
+        var cm = JSON.parse(btn.getAttribute('data-recompare'));
+        showComparison(cm.type === 'school' ? 'school' : 'major', cm.a, cm.b);
+      } catch (e) { /* malformed */ }
+    });
+  }
+
+  /* ============================================================
+     DETAIL MODAL + NATIVE INTERACTIONS (Save / Reflect / Compare)
+     ============================================================ */
+
+  var compareTray = null; // { type: 'major'|'school', items: [name] }
+
+  function reflKeyFor(type, id) { return type + ':' + id; }
+
+  function markViewed(type, id) {
+    var changed = false;
+    var w = getWorking();
+    if (type === 'major' && w.majors_viewed.indexOf(id) === -1) { state.views.majors.push(id); changed = true; }
+    if (type === 'cluster' && w.clusters_viewed.indexOf(id) === -1) { state.views.clusters.push(id); changed = true; }
+    if (type === 'path' && w.paths_viewed.indexOf(id) === -1) { state.views.paths.push(id); changed = true; }
+    if (type === 'school' && w.schools_viewed.indexOf(id) === -1) { state.views.schools.push(id); changed = true; }
+    if (changed) saveState();
+    return changed;
+  }
+
+  function openDetail(type, id) {
+    var labelMap = { major: 'Major', path: 'Career path', school: 'College', cluster: 'Career field' };
+    var title = id, sub = '', blocks = '', canSave = false, canCompare = false, saveLabel = 'Save';
+    var w0 = getWorking();
+
+    if (type === 'major') {
+      var m = findMajor(id); if (!m) return;
+      var mc = findCluster(m.clusterId);
+      sub = (mc ? mc.name : '') + ' \u00b7 ' + m.blurb;
+      blocks =
+        '<div class="cp-detail-block"><h4>Sample courses</h4><ul>' + m.sampleCourses.map(function (x) { return '<li>' + escapeHtml(x) + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="cp-detail-block"><h4>Where it can lead</h4><p>' + m.relatedPaths.map(escapeHtml).join(', ') + '</p></div>';
+      canSave = true; canCompare = true;
+    } else if (type === 'path') {
+      var p = findPath(id); if (!p) return;
+      var pc = findCluster(p.clusterId);
+      sub = pc ? pc.name : '';
+      blocks =
+        '<div class="cp-detail-block"><h4>A day in the life</h4><p>' + escapeHtml(p.dayInLife) + '</p></div>' +
+        '<div class="cp-detail-block"><h4>Typical pay</h4><p>' + escapeHtml(p.payRange) + '</p><h4 style="margin-top:10px">Outlook</h4><p>' + escapeHtml(p.outlook) + '</p>' +
+        '<p class="cp-illustrative-note">Pay and outlook shown are illustrative, not official statistics.</p></div>';
+    } else if (type === 'school') {
+      var col = findCollege(id); if (!col) return;
+      sub = col.type + ' \u00b7 ' + col.location;
+      var offered = col.offersMajors.map(function (name) {
+        var savedMark = w0.majors_saved.indexOf(name) !== -1 ? ' (saved)' : '';
+        return '<li>' + escapeHtml(name) + savedMark + '</li>';
+      }).join('');
+      blocks = '<div class="cp-detail-block"><h4>Offers these majors</h4><ul>' + offered + '</ul></div>';
+      canSave = true; canCompare = true;
+    } else if (type === 'cluster') {
+      var cl = findCluster(id); if (!cl) return;
+      title = cl.name;
+      sub = cl.blurb;
+      var inField = MAJORS.filter(function (mm) { return mm.clusterId === id; });
+      blocks = '<div class="cp-detail-block"><h4>Majors in this field</h4><ul>' + inField.map(function (mm) { return '<li>' + escapeHtml(mm.name) + '</li>'; }).join('') + '</ul></div>';
+      canSave = true;
+    } else { return; }
+
+    // First-time view earns XP.
+    var viewedNow = markViewed(type, id);
+
+    var w = getWorking();
+    var savedArr = type === 'major' ? w.majors_saved : type === 'school' ? w.schools_saved : type === 'cluster' ? w.clusters_saved : [];
+    var isSaved = savedArr.indexOf(id) !== -1;
+    var rKey = reflKeyFor(type, id);
+    var existingRefl = state.reflections[rKey];
+    var inTray = compareTray && compareTray.type === (type === 'school' ? 'school' : 'major') && compareTray.items.indexOf(id) !== -1;
+
+    var actions = '<div class="cp-action-row">';
+    if (canSave) {
+      actions += '<button class="cp-action-btn cp-btn-save" id="cp-act-save" type="button"' + (isSaved ? ' disabled' : '') + '>' + icon(isSaved ? 'check' : 'bookmark') + (isSaved ? 'Saved' : saveLabel) + '</button>';
+    }
+    actions += '<button class="cp-action-btn cp-btn-reflect" id="cp-act-reflect" type="button">' + icon('pencil') + (existingRefl ? 'Edit reflection' : 'Reflect') + '</button>';
+    if (canCompare) {
+      actions += '<button class="cp-action-btn cp-btn-compare' + (inTray ? ' cp-in-tray' : '') + '" id="cp-act-compare" type="button">' + icon('scale') + (inTray ? 'In compare tray' : 'Compare') + '</button>';
+    }
+    actions += '</div><p class="cp-xp-hint">Save +' + XP.save + ' XP \u00b7 Reflect +' + XP.reflection + ' XP \u00b7 Compare +' + XP.comparison + ' XP. Each earns once per item.</p>';
+
+    var reflBlock = '';
+    if (existingRefl) {
+      reflBlock = '<div class="cp-reflect-saved" id="cp-refl-display"><strong>Your reflection</strong>' + escapeHtml(existingRefl.text) + '</div>';
+    }
+
+    openModal(
+      '<div class="cp-modal-head"><div><div class="cp-eyebrow">' + escapeHtml(labelMap[type]) + '</div>' +
+      '<h2 class="cp-modal-title">' + escapeHtml(title) + '</h2></div>' +
+      '<button class="cp-modal-close" id="cp-modal-close" type="button" aria-label="Close">' + icon('x') + '</button></div>' +
+      '<p class="cp-modal-sub">' + escapeHtml(sub) + '</p>' +
+      blocks + actions + reflBlock +
+      '<div id="cp-reflect-slot"></div>'
+    );
+
+    if (viewedNow) {
+      recompute('You opened ' + (type === 'cluster' ? title : id) + ' for the first time.');
+    } else {
+      recompute(null, { silent: true });
+    }
+
+    var saveBtn = el('cp-act-save');
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+      if (type === 'major' && state.saves.majors.indexOf(id) === -1) state.saves.majors.push(id);
+      if (type === 'school' && state.saves.schools.indexOf(id) === -1) state.saves.schools.push(id);
+      if (type === 'cluster' && state.saves.clusters.indexOf(id) === -1) state.saves.clusters.push(id);
+      saveState();
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = icon('check') + 'Saved';
+      recompute('Saved to your path.');
+      renderAll();
+    });
+
+    var reflBtn = el('cp-act-reflect');
+    if (reflBtn) reflBtn.addEventListener('click', function () {
+      var slot = el('cp-reflect-slot');
+      if (!slot || slot.innerHTML) return;
+      slot.innerHTML =
+        '<div class="cp-reflect-form">' +
+          '<label for="cp-refl-text">Could you see yourself here? What surprised you?</label>' +
+          '<textarea id="cp-refl-text" maxlength="1000" placeholder="A sentence or two is plenty."></textarea>' +
+          '<div class="cp-action-row"><button class="cp-action-btn cp-btn-reflect" id="cp-refl-submit" type="button">' + icon('check') + 'Save reflection</button></div>' +
+        '</div>';
+      var existing = state.reflections[rKey];
+      var ta = el('cp-refl-text');
+      if (existing && ta) ta.value = existing.text;
+      if (ta) ta.focus();
+      el('cp-refl-submit').addEventListener('click', function () {
+        var text = (ta.value || '').trim();
+        if (!text) { ta.focus(); return; }
+        var firstTime = !state.reflections[rKey];
+        state.reflections[rKey] = { type: type, id: id, text: text, ts: Date.now() };
+        saveState();
+        slot.innerHTML = '';
+        var disp = el('cp-refl-display');
+        var safe = '<strong>Your reflection</strong>' + escapeHtml(text);
+        if (disp) { disp.innerHTML = safe; }
+        else {
+          var d = document.createElement('div');
+          d.className = 'cp-reflect-saved'; d.id = 'cp-refl-display';
+          d.innerHTML = safe;
+          slot.parentNode.insertBefore(d, slot);
+        }
+        recompute(firstTime ? 'Reflection saved. This is the real work.' : null, { silent: !firstTime });
+        if (!firstTime) toast('badge', 'Updated', 'Reflection updated.');
+        renderAll();
+      });
+    });
+
+    var cmpBtn = el('cp-act-compare');
+    if (cmpBtn) cmpBtn.addEventListener('click', function () {
+      addToCompare(type === 'school' ? 'school' : 'major', id);
+    });
+  }
+
+  function addToCompare(cmpType, id) {
+    if (!compareTray || compareTray.type !== cmpType) compareTray = { type: cmpType, items: [] };
+    if (compareTray.items.indexOf(id) !== -1) { renderTray(); return; }
+    compareTray.items.push(id);
+    if (compareTray.items.length >= 2) {
+      var a = compareTray.items[0], b = compareTray.items[1];
+      compareTray = null;
+      renderTray();
+      closeModal();
+      recordComparison(cmpType, a, b);
+    } else {
+      closeModal();
+      renderTray();
+      toast('badge', '1 of 2', 'Pick one more ' + (cmpType === 'school' ? 'school' : 'major') + ' to compare.');
+    }
+  }
+
+  function recordComparison(cmpType, a, b) {
+    var entry = { type: cmpType, a: a, b: b, ts: Date.now() };
+    var key = cmpKey(entry);
+    var exists = false;
+    var all = getWorking().comparisons_made;
+    for (var i = 0; i < all.length; i++) if (cmpKey(all[i]) === key) exists = true;
+    if (!exists) {
+      state.comparisons.push(entry);
+      saveState();
+    }
+    showComparison(cmpType, a, b);
+    recompute(exists ? null : 'Comparison complete.', { silent: exists });
+    renderAll();
+  }
+
+  function comparisonColumn(cmpType, id) {
+    if (cmpType === 'major') {
+      var m = findMajor(id);
+      if (!m) return '<div class="cp-compare-col"><h3>' + escapeHtml(id) + '</h3></div>';
+      var c = findCluster(m.clusterId);
+      return '<div class="cp-compare-col"><h3>' + escapeHtml(m.name) + '</h3>' +
+        '<div class="cp-compare-field"><h5>Field</h5><p>' + escapeHtml(c ? c.name : '') + '</p></div>' +
+        '<div class="cp-compare-field"><h5>What it is</h5><p>' + escapeHtml(m.blurb) + '</p></div>' +
+        '<div class="cp-compare-field"><h5>Sample courses</h5><p>' + m.sampleCourses.map(escapeHtml).join(', ') + '</p></div>' +
+        '<div class="cp-compare-field"><h5>Leads to</h5><p>' + m.relatedPaths.map(escapeHtml).join(', ') + '</p></div></div>';
+    }
+    var col = findCollege(id);
+    if (!col) return '<div class="cp-compare-col"><h3>' + escapeHtml(id) + '</h3></div>';
+    return '<div class="cp-compare-col"><h3>' + escapeHtml(col.name) + '</h3>' +
+      '<div class="cp-compare-field"><h5>Type</h5><p>' + escapeHtml(col.type) + '</p></div>' +
+      '<div class="cp-compare-field"><h5>Location</h5><p>' + escapeHtml(col.location) + '</p></div>' +
+      '<div class="cp-compare-field"><h5>Offers</h5><p>' + col.offersMajors.map(escapeHtml).join(', ') + '</p></div></div>';
+  }
+
+  function showComparison(cmpType, a, b) {
+    openModal(
+      '<div class="cp-modal-head"><div><div class="cp-eyebrow">Side by side</div>' +
+      '<h2 class="cp-modal-title">' + escapeHtml(a) + ' vs ' + escapeHtml(b) + '</h2></div>' +
+      '<button class="cp-modal-close" id="cp-modal-close" type="button" aria-label="Close">' + icon('x') + '</button></div>' +
+      '<div class="cp-compare-cols">' + comparisonColumn(cmpType, a) + comparisonColumn(cmpType, b) + '</div>'
+    );
+  }
+
+  function renderTray() {
+    var root = el('cp-tray-root');
+    if (!compareTray || compareTray.items.length === 0) { root.innerHTML = ''; return; }
+    root.innerHTML =
+      '<div class="cp-compare-tray"><span>Comparing: ' + escapeHtml(compareTray.items[0]) + '. Pick one more ' + (compareTray.type === 'school' ? 'school' : 'major') + '.</span>' +
+      '<button id="cp-tray-cancel" type="button">Cancel</button></div>';
+    el('cp-tray-cancel').addEventListener('click', function () {
+      compareTray = null;
+      renderTray();
+    });
+  }
+
+  function openModal(inner) {
+    var root = el('cp-modal-root');
+    root.innerHTML = '<div class="cp-modal-overlay" id="cp-modal-overlay"><div class="cp-modal" role="dialog" aria-modal="true">' + inner + '</div></div>';
+    var overlay = el('cp-modal-overlay');
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    var close = el('cp-modal-close');
+    if (close) close.addEventListener('click', closeModal);
+  }
+
+  function closeModal() {
+    el('cp-modal-root').innerHTML = '';
+    renderAll();
+  }
+
+  /* ============================================================
+     ACHIEVEMENTS
+     ============================================================ */
+
+  function renderAchievements(data) {
+    var li = data.levelInfo;
+    var span = li.next ? (li.next.min - li.level.min) : 1;
+    var into = li.next ? (data.xp - li.level.min) : span;
+    var pct = Math.max(0, Math.min(100, Math.round((into / span) * 100)));
+    var xpLabel = li.next
+      ? (data.xp + ' XP \u00b7 ' + (li.next.min - data.xp) + ' to ' + li.next.name)
+      : (data.xp + ' XP \u00b7 top level reached');
+
+    var ringsHtml = '';
+    for (var i = 0; i < data.rings.length; i++) {
+      var r = data.rings[i];
+      ringsHtml += '<div class="cp-ring-cell">' + ringSvg(r.pct) + '<div class="cp-ring-name">' + escapeHtml(r.name) + '</div><div class="cp-ring-hint">' + escapeHtml(r.hint) + '</div></div>';
+    }
+
+    var html = '';
+    for (i = 0; i < BADGES.length; i++) {
+      var b = BADGES[i];
+      var earned = state.earnedBadges.indexOf(b.id) !== -1;
+      html += '<div class="cp-trophy ' + (earned ? 'cp-earned' : 'cp-locked') + '">' +
+        '<div class="cp-badge-medal">' + icon(earned ? b.icon : 'lock') + '</div>' +
+        '<div class="cp-trophy-name">' + escapeHtml(b.name) + '</div>' +
+        '<div class="cp-trophy-cond">' + escapeHtml(b.cond) + '</div>' +
+        (earned ? '<span class="cp-trophy-earned-tag">Earned</span>' : '') +
+      '</div>';
+    }
+
+    el('cp-screen-achievements').innerHTML =
+      '<div class="cp-eyebrow">Achievements</div>' +
+      '<h2 class="cp-section-title">Your progress</h2>' +
+      '<p class="cp-section-sub">Levels, self-knowledge meters, and every badge you can earn.</p>' +
+      '<div class="cp-stack">' +
+        '<div class="cp-card">' +
+          '<div class="cp-level-row"><span class="cp-level-chip cp-level-chip-light">' + icon('trophy') + escapeHtml(li.level.name) + '</span><span class="cp-item-meta">' + escapeHtml(xpLabel) + '</span></div>' +
+          '<div class="cp-xp-track cp-xp-track-light"><div class="cp-xp-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Know Yourself</div>' +
+          '<h3 class="cp-section-title" style="font-size:19px">How well do you know yourself?</h3>' +
+          '<p class="cp-section-sub">These grow as you reflect, explore, and commit to favorites. They measure you against your own goals, nobody else\u2019s.</p>' +
+          '<div class="cp-rings-row">' + ringsHtml + '</div>' +
+        '</div>' +
+        '<div class="cp-card">' +
+          '<div class="cp-eyebrow">Trophy case</div>' +
+          '<h3 class="cp-section-title" style="font-size:19px">Badges</h3>' +
+          '<p class="cp-section-sub">Locked ones show exactly how to unlock them.</p>' +
+          '<div class="cp-trophy-grid">' + html + '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ============================================================
+     RENDER ALL + INIT
+     ============================================================ */
+
+  function renderAll() {
+    var data = recompute(null, { silent: true });
+    if (currentScreen === 'home') renderHome(data);
+    if (currentScreen === 'whoiam') renderWhoIAm(data);
+    if (currentScreen === 'majors') renderMajors(data);
+    if (currentScreen === 'schools') renderSchools(data);
+    if (currentScreen === 'achievements') renderAchievements(data);
+  }
+
+  // Nav wiring.
+  bind('.cp-nav-btn', function (btn) { showScreen(btn.getAttribute('data-screen')); });
+
+  // Reset demo.
+  el('cp-reset-demo').addEventListener('click', function () {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+    window.location.reload();
+  });
+
+  // Iframe auto-height reporting for the Webflow embed.
+  var dashRoot = document.getElementById('cp-hs-dash');
+  function postHeight() {
+    var h = Math.ceil(dashRoot.getBoundingClientRect().height);
+    try {
+      window.parent.postMessage({ type: 'CP_HS_DASH_RESIZE', height: h }, '*');
+    } catch (e) { /* not embedded */ }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(postHeight).observe(dashRoot);
+  } else {
+    window.addEventListener('resize', postHeight);
+  }
+  postHeight();
+
+  // First boot: seed the ledger and badges silently from the mock
+  // session so historical activity never re-toasts.
+  recompute(null, { silent: true });
+  isFirstBoot = false;
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
